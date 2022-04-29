@@ -1,0 +1,72 @@
+// TYPOGRAPHY1
+$primary-font: 'IBM Plex Sans', sans-serif;
+$secondary-font: 'IBM Plex Mono', monospace;
+$numeral-font: 'IBM Plex Mono', monospace;
+$font-size-large: 22px;
+$font-size-normal: 18px;
+$font-size-mid: 16px;
+$font-size-small: 14px;
+$font-size-x-small: 11px;
+$font-size-xx-small: 10px;
+$line-height: 22px;
+
+// COLORS
+$light-color: rgb(255, 255, 255);
+$background-color: rgb(230, 230, 230);
+$foreground-color: rgb(25, 25, 25);
+
+$secondary-one: rgb(226, 226, 226);
+$secondary-two: #c7c7c7;
+$secondary-three: #535353;
+
+$error-color: #f74141;
+
+// MISC
+$border-radius: 5px;
+$transition: cubic-bezier(0.23, 1, 0.32, 1);
+
+// RESPONSIVE
+$breakpoints: (
+  "phone-small": (
+    max-width: 600px
+  ),
+  "phone": (
+    max-width: 700px
+  ),
+  "small": (
+    max-width: 900px
+  ),
+  "desktop": (
+    min-width: 900px
+  ),
+  "large": (
+    max-width: 1600px
+  ),
+  "short": (
+    max-height: 700px
+  ),
+);
+
+/// Responsive manager.
+/// @access public
+/// @param {String} $breakpoint - Breakpoint
+/// @requires $breakpoints
+@mixin screen-size($breakpoint) {
+  $raw-query: map-get($breakpoints, $breakpoint);
+  @if $raw-query {
+    $query: if(type-of($raw-query) == "string", unquote($raw-query), inspect($raw-query));
+    @media #{$query} {
+      @content;
+    }
+  } @else {
+    @error 'No value found for `#{$breakpoint}`. ' + 'Please make sure it is defined in `$breakpoints` map.';
+  }
+}
+
+@mixin hide-scroll {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
