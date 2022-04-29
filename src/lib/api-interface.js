@@ -39,7 +39,6 @@ export const saveProposal = messageBody => {
             const requestOptions = {
                 method: "POST",
                 body: JSON.stringify({
-                    cygnetId: CYGNET_ID,
                     message: messageBody,
                     authorization: token
                 }),
@@ -119,7 +118,6 @@ export const setVote = async (cycleId, voteAllocation, voteMultiplier, voteMulti
             method: "POST",
             redirect: "follow",
             body: JSON.stringify({
-                cygnetId: CYGNET_ID,
                 cycleId: cycleId,
                 voteAllocation: voteAllocation,
                 submitted: submitted,

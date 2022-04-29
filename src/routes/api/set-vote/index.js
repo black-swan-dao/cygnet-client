@@ -15,14 +15,14 @@ export const post = async (event) => {
 
   const doc = {
     _type: 'vote',
-    _id: userId + '-' + body.cycleId,
+    _id: userId + '-' + import.meta.env.VITE_CYGNET_ID,
     instance: {
       _type: "reference",
-      _ref: body.cygnetId,
+      _ref: import.meta.env.VITE_CYGNET_ID,
     },
     cycle: {
       _type: "reference",
-      _ref: body.cycleId,
+      _ref: import.meta.env.VITE_CYGNET_ID
     },
     user: {
       _type: "reference",

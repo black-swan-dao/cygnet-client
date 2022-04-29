@@ -15,7 +15,7 @@ export const post = async (event) => {
     // Get user ID from token
     const userId = decodedToken.sub.replace(DISCORD_PREFIX, "")
     // Get user from Sanity
-    const user = await loadData("*[_type == 'user' && _id == $id][0]", { id: userId + '-' + body.cygnetId })
+    const user = await loadData("*[_type == 'user' && _id == $id][0]", { id: userId + '-' + import.meta.env.VITE_CYGNET_ID })
     console.log('user', user)
     // const imgRes = await client.assets.upload("image", fs.createReadStream('./uploads/' + req.file.filename, { contentType: req.file.mimetype, filename: req.file.filename }))
     // console.log(imgRes)
@@ -35,7 +35,7 @@ export const post = async (event) => {
         },
         instance: {
             _type: "reference",
-            _ref: body.cygnetId,
+            _ref: import.meta.env.VITE_CYGNET_ID,
         },
         cycle: {
             _type: "reference",

@@ -14,7 +14,7 @@ export const post = async (event) => {
     const proposal = await loadData("*[_type == 'proposal' && _id == $id][0]", { id: body.proposalId })
     const authorIds = proposal.authors.map(author => author._ref)
     let res = {}
-    if (authorIds.includes(userId)) {
+    if (authorIds.includes(userId + '-' + import.meta.env.VITE_CYGNET_ID)) {
         res = await authorizedClient.delete(body.proposalId)
     }
     return {
