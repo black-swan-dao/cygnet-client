@@ -1,5 +1,5 @@
 <script>
-  import { profile, profileMeta, logout } from "$lib/authentication.js"
+  import { profile, profileMeta, logout, isAdmin } from "$lib/authentication.js"
   import {
     currentCycle,
     currentCyclePhaseName,
@@ -9,7 +9,7 @@
   import Menu from "$lib/graphics/Menu.svelte"
   import Close from "$lib/graphics/Close.svelte"
   import { currentSection } from "$lib/ui.js"
-  import { general, resourcesInCycle } from "$lib/data.js"
+  import { instance, resourcesInCycle } from "$lib/data.js"
   import { urlFor } from "$lib/sanity.js"
   import { onMount } from "svelte"
   import { goto } from "$app/navigation"
@@ -111,7 +111,10 @@
 
 {#if userSwitchActive}
   <div class="user-switch" style={`min-width: ${userSwitchWidth}px;`}>
-    {#if $general.showEthConnection}
+    {#if $isAdmin}
+      <a href="/admin" class="user-switch-item">Admin</a>
+    {/if}
+    {#if $instance.showEthConnection}
       <a
         href="/connect-eth-address"
         class="user-switch-item"
@@ -122,6 +125,7 @@
         Connect ETH address
       </a>
     {/if}
+
     <div class="user-switch-item" on:click={logout}>Log out</div>
   </div>
 {/if}
@@ -130,18 +134,18 @@
   <div class="left-side">
     <!-- (1) TITLE -->
     <a href="/" class="title">
-      {#if $general.smallLogo}
+      {#if $instance.smallLogo}
         <div class="logo-container">
           <img
-            src={urlFor($general.smallLogo)
+            src={urlFor($instance.smallLogo)
               .width(100)
               .quality(90)
               .auto("format")
               .url()}
           />
         </div>
-      {:else if $general.siteTitle}
-        <div>{$general.siteTitle}</div>
+      {:else if $instance.title}
+        <div>{$instance.title}</div>
       {:else}
         <div>Cygnet</div>
       {/if}

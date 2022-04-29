@@ -33,6 +33,10 @@ export const post = async (event) => {
             _type: "slug",
             current: slug,
         },
+        instance: {
+            _type: "reference",
+            _ref: body.cygnetId,
+        },
         cycle: {
             _type: "reference",
             _ref: message.cycleId,

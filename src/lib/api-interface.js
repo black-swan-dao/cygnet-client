@@ -1,7 +1,5 @@
-import {
-    getTokenSilently
-} from "$lib/authentication.js"
-
+import { getTokenSilently } from "$lib/authentication.js"
+import { CYGNET_ID } from "$lib/data.js"
 
 // const toBase64 = file => new Promise((resolve, reject) => {
 //     const reader = new FileReader();
@@ -12,14 +10,10 @@ import {
 
 export const uploadImage = file => {
     return new Promise(async (resolve, reject) => {
-
-        console.log(file)
         let formData = new FormData()
         if (file) {
             formData.append("mainImage", file, file.name)
         }
-        // const base64Encoded = await toBase64(file)
-        // console.log('base64Encoded', base64Encoded)
         const requestOptions = {
             method: "POST",
             body: formData,
@@ -27,7 +21,6 @@ export const uploadImage = file => {
         }
         const response = await fetch("https://graphics.eyebeam.dev", requestOptions)
         // const response = await fetch("/api/upload-image", requestOptions)
-        console.log(response)
         if (response.ok) {
             const responseData = await response.json()
             resolve(responseData)
@@ -46,6 +39,7 @@ export const saveProposal = messageBody => {
             const requestOptions = {
                 method: "POST",
                 body: JSON.stringify({
+                    cygnetId: CYGNET_ID,
                     message: messageBody,
                     authorization: token
                 }),
@@ -125,6 +119,7 @@ export const setVote = async (cycleId, voteAllocation, voteMultiplier, voteMulti
             method: "POST",
             redirect: "follow",
             body: JSON.stringify({
+                cygnetId: CYGNET_ID,
                 cycleId: cycleId,
                 voteAllocation: voteAllocation,
                 submitted: submitted,

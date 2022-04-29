@@ -32,7 +32,7 @@
   // DEBUG ==>
   // $: console.log("$currentCycle", $currentCycle)
   // $: console.log("$availableCycles", $availableCycles)
-  // $: console.log("$general", $general)
+  // $: console.log("$instance", $instance)
   // $: console.log("$voteAllocation", $voteAllocation)
 
   let authenticationInProgress = true
@@ -57,13 +57,14 @@
     setThemeColors()
     setAvailableCycles($profileMeta, $cycles)
     console.log("____ Available cycles:", $availableCycles)
-    const cookieCycleId = getCycleFromCookie()
-    console.log("____ Cycle cookie read:", cookieCycleId)
-    if (cookieCycleId && $cycles.find(c => c._id === cookieCycleId)) {
-      changeCycle($cycles.find(c => c._id === cookieCycleId))
-    } else {
-      setDefaultCycle($availableCycles)
-    }
+    // const cookieCycleId = getCycleFromCookie()
+    // console.log("____ Cycle cookie read:", cookieCycleId)
+    // if (cookieCycleId && $cycles.find(c => c._id === cookieCycleId)) {
+    //   changeCycle($cycles.find(c => c._id === cookieCycleId))
+    // } else {
+    //   setDefaultCycle($availableCycles)
+    // }
+    setDefaultCycle($availableCycles)
     listenForPhaseChanges()
     listenForProposalChanges()
     authenticationInProgress = false

@@ -3,12 +3,14 @@ import { writable, get } from 'svelte/store';
 import { loadData } from "$lib/sanity.js"
 import { AUTH0_DOMAIN, AUTH0_CLIENT_ID } from "$lib/cygnet-config.js"
 import { voteMultipliers } from "$lib/voting.js"
+import { CYGNET_ID } from "$lib/data.js";
 
 const DISCORD_PREFIX = "oauth2|discord|"
 export let auth0 = null;
 export let isAuthenticated = false;
 export const profile = writable({})
 export const profileMeta = writable({})
+export const isAdmin = writable(false)
 
 export const configureAuthClient = async () => {
     auth0 = await createAuth0Client({
@@ -32,11 +34,12 @@ export const setProfile = async () => {
     try {
         sanityProfile = await loadData(
             "*[_type == 'user' && _id == $sub][0]",
-            { sub: get(profile).sub.replace(DISCORD_PREFIX, "") }
+            { sub: get(profile).sub.replace(DISCORD_PREFIX, "") + '-' + CYGNET_ID }
         )
         const multiplierRole = sanityProfile.roles.find(r => Object.keys(voteMultipliers).includes(r))
         sanityProfile.voteMultiplier = voteMultipliers[multiplierRole] || 1
         sanityProfile.voteMultiplierRole = multiplierRole || false
+        sanityProfile.roles.includes('cygnet-admin') ? isAdmin.set(true) : isAdmin.set(false)
     } catch (e) {
         console.log('Error loading profile from Sanity:', e);
         return

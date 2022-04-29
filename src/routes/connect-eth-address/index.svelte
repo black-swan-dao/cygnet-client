@@ -1,6 +1,6 @@
 <script>
   import get from "lodash/get.js"
-  import { general } from "$lib/data.js"
+  import { instance } from "$lib/data.js"
   import SectionHeader from "$lib/components/SectionHeader.svelte"
   import { profileMeta } from "$lib/authentication.js"
   import { connectEthAddress } from "$lib/api-interface.js"
@@ -40,7 +40,7 @@
 
 <SectionHeader
   title="Connect Ethereum address"
-  description={$general.ethConnectionText}
+  description={$instance.ethConnectionText}
 />
 <div class="connect-eth-address" class:processing>
   <input type="text" bind:value={ethAddress} placeholder="0xabc..." />

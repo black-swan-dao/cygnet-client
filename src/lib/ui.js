@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store'
 import { get } from 'svelte/store';
 import chroma from "chroma-js";
-import { general } from "$lib/data.js"
+import { instance } from "$lib/data.js"
 export const currentSection = writable('')
 
 const changeThemeColor = color => {
@@ -14,11 +14,11 @@ const changeThemeColor = color => {
 export const setThemeColors = () => {
     let root = document.documentElement;
     if (root.style) {
-        root.style.setProperty('--main-color', get(general).mainColor);
-        root.style.setProperty('--main-color-two', chroma(get(general).mainColor).darken(0.4).hex());
-        root.style.setProperty('--main-color-three', chroma(get(general).mainColor).alpha(0.1).hex());
-        root.style.setProperty('--highlight-color', get(general).highlightColor);
-        changeThemeColor(get(general).mainColor);
+        root.style.setProperty('--main-color', get(instance).mainColor);
+        root.style.setProperty('--main-color-two', chroma(get(instance).mainColor).darken(0.4).hex());
+        root.style.setProperty('--main-color-three', chroma(get(instance).mainColor).alpha(0.1).hex());
+        root.style.setProperty('--highlight-color', get(instance).highlightColor);
+        changeThemeColor(get(instance).mainColor);
     }
 }
 

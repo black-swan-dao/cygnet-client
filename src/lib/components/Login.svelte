@@ -2,16 +2,16 @@
   import get from "lodash/get.js"
   import { urlFor, renderBlockText } from "$lib/sanity"
   import { login } from "$lib/authentication.js"
-  import { general } from "$lib/data.js"
+  import { instance } from "$lib/data.js"
 
   export let errorMessage = false
 </script>
 
 <div class="login-container">
-  {#if $general.bigLogo}
+  {#if $instance.bigLogo}
     <div class="logo-container">
       <img
-        src={urlFor($general.bigLogo)
+        src={urlFor($instance.bigLogo)
           .width(400)
           .quality(100)
           .auto("format")
@@ -19,12 +19,12 @@
       />
     </div>
   {:else}
-    <h1>{$general.siteTitle}</h1>
+    <h1>{$instance.title}</h1>
   {/if}
 
-  {#if $general.preLoginText}
+  {#if $instance.preLoginText}
     <div class="pre-login-text">
-      {@html renderBlockText(get($general, "preLoginText.content", []))}
+      {@html renderBlockText(get($instance, "preLoginText.content", []))}
     </div>
   {/if}
   {#if errorMessage}

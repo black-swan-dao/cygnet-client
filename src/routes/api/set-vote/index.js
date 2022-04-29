@@ -16,6 +16,10 @@ export const post = async (event) => {
   const doc = {
     _type: 'vote',
     _id: userId + '-' + body.cycleId,
+    instance: {
+      _type: "reference",
+      _ref: body.cygnetId,
+    },
     cycle: {
       _type: "reference",
       _ref: body.cycleId,

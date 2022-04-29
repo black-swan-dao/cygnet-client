@@ -1,12 +1,12 @@
 <script>
   import { currentSection } from "$lib/ui.js"
-  import { general } from "$lib/data.js"
+  import { instance } from "$lib/data.js"
 </script>
 
 <footer>
   <div class="left">
-    {#if $general.siteTitle}
-      <div>{$general.siteTitle}</div>
+    {#if $instance.title}
+      <div>{$instance.title}</div>
     {:else}
       <div>Cygnet</div>
     {/if}

@@ -5,13 +5,13 @@
   import { currentSection } from "$lib/ui.js"
   import { currentCycle, currentCyclePhaseName } from "$lib/cycles.js"
   import { renderBlockText } from "$lib/sanity"
-  import { general } from "$lib/data.js"
+  import { instance } from "$lib/data.js"
   currentSection.set("home")
 </script>
 
 <div class="landing-container">
   <div class="column left">
-    {#if !$currentCycle.phase}
+    {#if !$currentCycle || !$currentCycle.phase}
       <div class="warning">
         <h1>No cycle found!</h1>
         <p>
@@ -38,25 +38,27 @@
     {/if}
   </div>
   <div class="column right">
-    <!-- CYCLE TITLE -->
-    {#if $currentCycle.title}
-      <h1>{$currentCycle.title}</h1>
-    {/if}
-    <!-- CYCLE INTRODUCTION -->
-    {#if $currentCycle.textLanding}
-      <div class="cycle-introduction">
-        {@html renderBlockText(get($currentCycle, "textLanding.content", []))}
-      </div>
-    {/if}
-    <!-- MAIN TITLE -->
-    {#if $general.siteTitle}
-      <h1>{$general.siteTitle}</h1>
-    {/if}
-    <!-- GENERAL INTRODUCTION -->
-    {#if $general.landingPageText}
-      <div class="landing-text">
-        {@html renderBlockText(get($general, "landingPageText.content", []))}
-      </div>
+    {#if $currentCycle}
+      <!-- CYCLE TITLE -->
+      {#if $currentCycle.title}
+        <h1>{$currentCycle.title}</h1>
+      {/if}
+      <!-- CYCLE INTRODUCTION -->
+      {#if $currentCycle.textLanding}
+        <div class="cycle-introduction">
+          {@html renderBlockText(get($currentCycle, "textLanding.content", []))}
+        </div>
+      {/if}
+      <!-- MAIN TITLE -->
+      {#if $instance.title}
+        <h1>{$instance.title}</h1>
+      {/if}
+      <!-- GENERAL INTRODUCTION -->
+      {#if $instance.landingPageText}
+        <div class="landing-text">
+          {@html renderBlockText(get($instance, "landingPageText.content", []))}
+        </div>
+      {/if}
     {/if}
   </div>
 </div>
