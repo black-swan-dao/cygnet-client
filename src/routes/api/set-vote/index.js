@@ -26,7 +26,7 @@ export const post = async (event) => {
     },
     user: {
       _type: "reference",
-      _ref: userId,
+      _ref: userId + '-' + import.meta.env.VITE_CYGNET_ID,
     },
     voteMultiplier: body.voteMultiplier || 1,
     voteMultiplierRole: body.voteMultiplierRole || "Audience",
