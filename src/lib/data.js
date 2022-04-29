@@ -6,7 +6,6 @@ import { goto } from '$app/navigation';
 import _ from 'lodash'
 
 export const CYGNET_ID = import.meta.env.VITE_CYGNET_ID
-console.log('CYGNET_ID', CYGNET_ID)
 
 export const proposals = writable([])
 export const users = writable([])

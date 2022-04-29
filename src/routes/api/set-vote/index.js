@@ -22,7 +22,7 @@ export const post = async (event) => {
     },
     cycle: {
       _type: "reference",
-      _ref: import.meta.env.VITE_CYGNET_ID
+      _ref: body.cycleId,
     },
     user: {
       _type: "reference",

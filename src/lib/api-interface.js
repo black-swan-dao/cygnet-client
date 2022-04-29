@@ -1,12 +1,5 @@
 import { getTokenSilently } from "$lib/authentication.js"
-import { CYGNET_ID } from "$lib/data.js"
 
-// const toBase64 = file => new Promise((resolve, reject) => {
-//     const reader = new FileReader();
-//     reader.readAsDataURL(file);
-//     reader.onload = () => resolve(reader.result);
-//     reader.onerror = error => reject(error);
-// });
 
 export const uploadImage = file => {
     return new Promise(async (resolve, reject) => {
@@ -176,6 +169,30 @@ export const deleteProposal = async proposal => {
         }
         // Send message
         const response = await fetch("/api/delete-proposal", requestOptions)
+        const responseData = await response.json()
+        console.log(responseData)
+    } catch (e) {
+        console.log(e.message)
+    }
+}
+
+export const triggerCount = async cycleId => {
+    try {
+        // Get token
+        const token = await getTokenSilently()
+        // Prepare message body
+        const rawBody = JSON.stringify({
+            cycleId: cycleId,
+            authorization: token
+        })
+        // Set message options
+        const requestOptions = {
+            method: "POST",
+            body: rawBody,
+            redirect: "follow",
+        }
+        // Send message
+        const response = await fetch("/api/count-votes", requestOptions)
         const responseData = await response.json()
         console.log(responseData)
     } catch (e) {

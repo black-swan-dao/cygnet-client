@@ -14,17 +14,17 @@ export const authorizedClient = sanityClient({
 })
 
 export const post = async (event) => {
-    console.log(event)
     const body = await event.request.json()
-    console.log(body)
-    // const cycleId = body.cycleId
-    const cycleId = "c486184c-5132-40eb-a0c0-4399c9f53844"
+    const cycleId = body.cycleId
     if (cycleId) {
         // Prepare inital result document
         const resultObject = {
             _id: "result_" + cycleId,
             _type: "result",
-
+            instance: {
+                _ref: import.meta.env.VITE_CYGNET_ID,
+                _type: "reference"
+            },
             cycle: {
                 _ref: cycleId,
                 _type: "reference"
@@ -77,21 +77,8 @@ export const post = async (event) => {
             console.log(`Result was created, document ID is ${res._id}`)
         })
 
-        // const HEADERS = {
-        //     'Access-Control-Allow-Origin': '*',
-        //     'Access-Control-Allow-Credentials': true,
-        //     'Access-Control-Allow-Headers': 'Content-Type',
-        //     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE'
-        // }
-
         return {
             body: JSON.stringify(resultObject),
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': 'Content-Type',
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
-                'Access-Control-Allow-Credentials': true,
-            }
         };
     }
     return {
