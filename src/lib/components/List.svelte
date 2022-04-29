@@ -7,7 +7,7 @@
 
 <div class="list">
   <div class="body">
-    {#each list as item (item._id)}
+    {#each list as item}
       <Row {item} {phase} {initialVote} />
     {/each}
   </div>
