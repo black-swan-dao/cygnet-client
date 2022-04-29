@@ -1,7 +1,7 @@
 import { writable, derived, get } from 'svelte/store';
 import { loadData, client } from "$lib/sanity.js"
-import { currentCycle } from './cycles';
-import { profileMeta } from './authentication';
+import { currentCycle } from '$lib/cycles.js';
+import { profileMeta } from '$lib/authentication.js';
 import { goto } from '$app/navigation';
 import _ from 'lodash'
 
@@ -32,18 +32,18 @@ export const submittedProposalsInCycle = derived(
     }
 );
 
-export const proposalsInCycleByUser = derived(
-    [proposalsInCycle, profileMeta],
-    ([$proposalsInCycle, $profileMeta]) => {
-        if ($proposalsInCycle.length === 0) return []
-        return $proposalsInCycle.filter(p => {
-            if (!p.authors || p.authors.length === 0) return false
-            const authorIds = _.get(p, "authors", []).map(a => a._id)
-            const isAuthor = authorIds.includes($profileMeta._id)
-            if (isAuthor) return true
-        })
-    }
-);
+// export const proposalsInCycleByUser = derived(
+//     [proposalsInCycle, profileMeta],
+//     ([$proposalsInCycle, $profileMeta]) => {
+//         if (!$profileMeta || $proposalsInCycle.length === 0) return []
+//         return $proposalsInCycle.filter(p => {
+//             if (!p.authors || p.authors.length === 0) return false
+//             const authorIds = _.get(p, "authors", []).map(a => a._id)
+//             const isAuthor = authorIds.includes($profileMeta._id)
+//             if (isAuthor) return true
+//         })
+//     }
+// );
 
 export const usersInCycle = derived(
     [users, currentCycle],

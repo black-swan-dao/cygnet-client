@@ -4,7 +4,9 @@
   import SectionHeader from "$lib/components/SectionHeader.svelte"
   import Redirector from "$lib/components/Redirector.svelte"
   import CountDown from "$lib/components/CountDown.svelte"
-  import { proposalsInCycleByUser } from "$lib/data.js"
+  // import { proposalsInCycleByUser } from "$lib/data.js"
+  import { proposalsInCycle } from "$lib/data.js"
+
   import { currentCycle } from "$lib/cycles.js"
   import { currentSection } from "$lib/ui.js"
   currentSection.set("proposal")
@@ -23,9 +25,9 @@
     </div>
   </div>
 
-  {#if $proposalsInCycleByUser && $proposalsInCycleByUser.length > 0}
+  {#if $proposalsInCycle && $proposalsInCycle.length > 0}
     <div class="header">Your Proposals</div>
-    <List list={$proposalsInCycleByUser} phase="proposal" />
+    <List list={$proposalsInCycle} phase="proposal" />
   {:else}
     <div class="header">No proposals yet...</div>
   {/if}
