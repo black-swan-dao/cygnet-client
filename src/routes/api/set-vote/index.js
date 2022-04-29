@@ -15,7 +15,7 @@ export const post = async (event) => {
 
   const doc = {
     _type: 'vote',
-    _id: userId + '-' + import.meta.env.VITE_CYGNET_ID,
+    _id: userId + '-' + body.cycleId,
     instance: {
       _type: "reference",
       _ref: import.meta.env.VITE_CYGNET_ID,
