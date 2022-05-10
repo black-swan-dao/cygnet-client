@@ -41,7 +41,7 @@
     {#if $currentCycle}
       <!-- CYCLE TITLE -->
       {#if $currentCycle.title}
-        <h1>{$currentCycle.title} XXX</h1>
+        <h1>{$currentCycle.title}</h1>
       {/if}
       <!-- CYCLE INTRODUCTION -->
       {#if $currentCycle.textLanding}
