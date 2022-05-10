@@ -203,6 +203,7 @@
 
         &.left {
           margin-right: 20px;
+          overflow: hidden;
 
           @include screen-size("small") {
             order: 2;
