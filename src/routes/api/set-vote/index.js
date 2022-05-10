@@ -30,7 +30,7 @@ export const post = async (event) => {
     },
     voteMultiplier: body.voteMultiplier || 1,
     voteMultiplierRole: body.voteMultiplierRole || "Audience",
-    submitted: body.submitted,
+    submitted: true,
     voteAllocation: []
   }
 
