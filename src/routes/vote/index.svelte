@@ -130,17 +130,17 @@
         </div>
       </div>
     </div>
+    <div class="main-submit" class:submitted on:click={submitVote}>
+      {#if submitted}<Locked /> Vote submitted on {compactDateTimeFormat(
+          lastSavedAt
+        )}{:else}Submit vote{/if}
+    </div>
     <div class="vote-container" class:submitted>
       <List
         list={$submittedProposalsInCycle}
         phase="vote"
         initialVote={voteDoc.votes}
       />
-    </div>
-    <div class="main-submit" class:submitted on:click={submitVote}>
-      {#if submitted}<Locked /> Vote submitted on {compactDateTimeFormat(
-          lastSavedAt
-        )}{:else}Submit vote{/if}
     </div>
   {/await}
 {:else}
@@ -344,7 +344,7 @@
     cursor: pointer;
     user-select: none;
     text-align: center;
-    margin-bottom: 80px;
+    margin-bottom: 20px;
     background: var(--main-color);
     color: $light-color;
     border: 2px solid var(--main-color);
