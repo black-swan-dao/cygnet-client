@@ -3,35 +3,27 @@
   import get from "lodash/get.js"
   import SvelteMarkdown from "svelte-markdown"
   import Badge from "$lib/components/Badge.svelte"
-  import { proposalsInCycle } from "$lib/data.js"
+  import { submittedProposalsInCycle } from "$lib/data.js"
   import { currentCycle } from "$lib/cycles.js"
   export let item = {}
 
   let proposalIndex = false
   let nextProposalSlug = ""
   let prevProposalSlug = ""
-  // let loading = true
 
-  // DEBUG ===>
-  // console.log("item", item)
-  // $: console.log("proposalIndex", proposalIndex)
-  // $: console.log("nextProposalSlug", nextProposalSlug)
-  // $: console.log("prevProposalSlug", prevProposalSlug)
-
-  // $: if (proposalIndex !== false) {
-  //   console.log("nav")
-  //   loading = true
-  // }
-
-  $: nextProposalSlug = $proposalsInCycle[proposalIndex + 1]
-    ? get($proposalsInCycle[proposalIndex + 1], "slug.current", "")
-    : get($proposalsInCycle[0], "slug.current", "")
-  $: prevProposalSlug = $proposalsInCycle[proposalIndex - 1]
-    ? get($proposalsInCycle[proposalIndex - 1], "slug.current", "")
-    : get($proposalsInCycle[$proposalsInCycle.length - 1], "slug.current", "")
+  $: nextProposalSlug = $submittedProposalsInCycle[proposalIndex + 1]
+    ? get($submittedProposalsInCycle[proposalIndex + 1], "slug.current", "")
+    : get($submittedProposalsInCycle[0], "slug.current", "")
+  $: prevProposalSlug = $submittedProposalsInCycle[proposalIndex - 1]
+    ? get($submittedProposalsInCycle[proposalIndex - 1], "slug.current", "")
+    : get(
+        $submittedProposalsInCycle[$submittedProposalsInCycle.length - 1],
+        "slug.current",
+        ""
+      )
 
   $: if (item._type == "proposal") {
-    proposalIndex = $proposalsInCycle.findIndex(
+    proposalIndex = $submittedProposalsInCycle.findIndex(
       proposal => proposal._id == item._id
     )
   }
@@ -39,7 +31,7 @@
 
 <div class="single">
   <!-- NAVIGATION -->
-  {#if item._type == "proposal" && $proposalsInCycle.length > 1}
+  {#if item._type == "proposal" && $submittedProposalsInCycle.length > 1}
     <div class="navigation">
       <a href={prevProposalSlug} sveltekit:prefetch class="nav-button previous">
         PREV
