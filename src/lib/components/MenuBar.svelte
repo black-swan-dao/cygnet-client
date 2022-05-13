@@ -14,12 +14,6 @@
   import { onMount } from "svelte"
   import { goto } from "$app/navigation"
 
-  // ===> DEBUG
-  // $: console.log("$page", $page)
-  // $: console.log("$profile", $profile)
-  // $: console.log("$profileMeta", $profileMeta)
-  // $: console.log("$currentSection", $currentSection)
-
   const proposalNav = {
     label: "Proposal",
     link: "/proposal",

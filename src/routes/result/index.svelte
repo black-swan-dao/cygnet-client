@@ -5,7 +5,6 @@
   import { results } from "$lib/data.js"
   import { currentCycle } from "$lib/cycles.js"
   import { currentSection, dateTimeFormat } from "$lib/ui.js"
-  import { triggerCount } from "$lib/api-interface.js"
   currentSection.set("result")
 
   let currentResult = {}
@@ -28,16 +27,10 @@
       })
     }
   }
-
-  const count = () => {
-    triggerCount($currentCycle._id)
-  }
 </script>
 
 {#if $currentCycle.phase == "result"}
   <SectionHeader title="Result" description={$currentCycle.textResult} />
-
-  <div class="count" on:click={count}>count</div>
   {#if currentResult}
     <div class="result-header">
       <div class="item small">
@@ -156,11 +149,5 @@
     border: 1px solid $error-color;
     display: inline-block;
     color: $error-color;
-  }
-
-  .count {
-    padding: 10px;
-    border: 1px solid vat(--main-color);
-    cursor: pointer;
   }
 </style>
