@@ -25,7 +25,7 @@
     <div class="btn" on:click={countVote}>
       Count Vote for <strong>{$currentCycle.title}</strong>
     </div>
-    {#if currentResult._createdAt}
+    {#if currentResult && currentResult._updatedAt}
       <div class="date">
         <strong>Calculated on:</strong>
         {dateTimeFormat(currentResult._updatedAt)}
