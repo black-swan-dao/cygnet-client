@@ -8,6 +8,7 @@
   import CountDown from "$lib/components/CountDown.svelte"
   import Ellipsis from "$lib/components/Ellipsis.svelte"
   import Locked from "$lib/graphics/Locked.svelte"
+  import Unlocked from "$lib/graphics/Unlocked.svelte"
   import { submittedProposalsInCycle } from "$lib/data.js"
   import { currentCycle } from "$lib/cycles.js"
   import { currentSection, compactDateTimeFormat } from "$lib/ui.js"
@@ -17,7 +18,12 @@
     voteAllocation,
     totalEffectiveVotes,
   } from "$lib/voting.js"
-  import { setVote, getVote } from "$lib/api-interface.js"
+  import {
+    setVote,
+    getVote,
+    submitVote,
+    unsubmitVote,
+  } from "$lib/api-interface.js"
   import { onMount } from "svelte"
 
   let lastSavedAt = false
@@ -46,15 +52,18 @@
     }, 1000)
   )
 
-  const submitVote = () => {
+  const submit = () => {
     saving = true
-    setVote(
-      $currentCycle._id,
-      $voteAllocation,
-      $profileMeta.voteMultiplier,
-      $profileMeta.voteMultiplierRole || "Audience",
-      !submitted
-    ).then(v => {
+    submitVote($currentCycle._id).then(v => {
+      lastSavedAt = v._updatedAt
+      saving = false
+      submitted = !submitted
+    })
+  }
+
+  const unsubmit = () => {
+    saving = true
+    unsubmitVote($currentCycle._id).then(v => {
       lastSavedAt = v._updatedAt
       saving = false
       submitted = !submitted
@@ -79,31 +88,6 @@
 {#if $currentCycle.phase == "vote"}
   <SectionHeader title="Vote" description={$currentCycle.textVote} />
   {#await voteDoc then voteDoc}
-    <!-- <div class="submit-header">
-      <div class="role-section">
-        <div class="item">
-          <div class="label">Vote role</div>
-          <div class="content">
-            {#if $profileMeta && $profileMeta.voteMultiplierRole}
-              {$profileMeta.voteMultiplierRole}
-            {:else}
-              🍇 Audience
-            {/if}
-          </div>
-        </div>
-        <div class="item vote-weight">
-          <div class="label">Vote weight</div>
-          <div class="content">
-            {$profileMeta.voteMultiplier}×
-          </div>
-        </div>
-      </div> -->
-    <!-- <div class="submit-vote" class:submitted on:click={submitVote}>
-        {#if submitted}<Locked /> Vote submitted on {compactDateTimeFormat(
-            lastSavedAt
-          )}{:else}Submit vote{/if}
-      </div> -->
-    <!-- </div> -->
     <div class="vote-header">
       <div class="item small">
         <div class="label">Remaining voice credits</div>
@@ -130,10 +114,25 @@
         </div>
       </div>
     </div>
-    <div class="main-submit" class:submitted on:click={submitVote}>
-      {#if submitted}<Locked /> Vote submitted on {compactDateTimeFormat(
-          lastSavedAt
-        )}{:else}Submit vote{/if}
+    <div
+      class="main-submit"
+      class:submitted
+      on:click={() => {
+        if (!submitted) {
+          submit()
+        }
+      }}
+    >
+      {#if submitted}
+        <div class="main-text">
+          <Locked /> Vote submitted on {compactDateTimeFormat(lastSavedAt)}
+        </div>
+        <div class="unsubmit" on:click={unsubmit}>
+          <Unlocked />
+        </div>
+      {:else}
+        <div class="main-text">Submit vote</div>
+      {/if}
     </div>
     <div class="vote-container" class:submitted>
       <List
@@ -162,7 +161,6 @@
     @include screen-size("small") {
       height: 240px;
       flex-wrap: wrap;
-      margin-bottom: 60px;
     }
 
     .item {
@@ -227,6 +225,7 @@
 
         @include screen-size("small") {
           height: 55px;
+          font-size: $font-size-x-small;
         }
       }
     }
@@ -333,32 +332,61 @@
   }
 
   .main-submit {
-    display: block;
-    padding-left: 20px;
-    padding-right: 20px;
-    // border: 2px solid var(--main-color);
+    display: flex;
     color: inherit;
     text-decoration: none;
     line-height: 80px;
     font-size: $font-size-large;
-    cursor: pointer;
     user-select: none;
     text-align: center;
     margin-bottom: 20px;
-    background: var(--main-color);
-    color: $light-color;
+    color: $foreground-color;
     border: 2px solid var(--main-color);
+    cursor: pointer;
 
     &.submitted {
-      border: 2px solid var(--main-color);
+      cursor: normal;
+      @include screen-size("small") {
+        font-size: $font-size-small;
+      }
+    }
+
+    .main-text {
+      line-height: 80px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .unsubmit {
       color: var(--main-color);
-      background: transparent;
+      width: 100px;
+      border-left: 2px solid var(--main-color);
+      cursor: pointer;
+      background: $background-color;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+
+      @include screen-size("small") {
+        display: none;
+      }
+
+      &:hover {
+        background: var(--main-color);
+        color: $background-color;
+      }
+    }
+
+    &.submitted {
+      cursor: default;
+      color: $background-color;
+      background: var(--main-color);
     }
 
     &:hover {
-      border: 2px solid var(--main-color-two);
-      background: var(--main-color-two);
-      color: $foreground-color;
+      color: $background-color;
+      background: var(--main-color);
     }
 
     @include screen-size("small") {

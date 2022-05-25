@@ -13,6 +13,10 @@
 </svg>
 
 <style>
+  path {
+    fill: currentcolor;
+  }
+
   .cls-1 {
     fill: none;
   }

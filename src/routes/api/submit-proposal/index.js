@@ -15,7 +15,6 @@ export const post = async (event) => {
   const authorIds = proposal.authors.map(author => author._ref)
   let res = {}
   if (authorIds.includes(userId + '-' + get(proposal, 'instance._ref', ''))) {
-    console.log('YES')
     res = await authorizedClient
       .patch(body.proposalId)
       .set({ submitted: true })

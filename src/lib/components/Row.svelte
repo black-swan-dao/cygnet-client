@@ -96,7 +96,7 @@
     &.vote {
       @include screen-size("small") {
         flex-wrap: wrap;
-        height: 240px;
+        height: 220px;
         flex-direction: column;
         margin-bottom: 20px;
       }

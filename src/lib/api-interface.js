@@ -113,7 +113,6 @@ export const setVote = async (cycleId, voteAllocation, voteMultiplier, voteMulti
             body: JSON.stringify({
                 cycleId: cycleId,
                 voteAllocation: voteAllocation,
-                submitted: submitted,
                 voteMultiplier: voteMultiplier,
                 voteMultiplierRole: voteMultiplierRole,
                 authorization: token
@@ -121,6 +120,50 @@ export const setVote = async (cycleId, voteAllocation, voteMultiplier, voteMulti
         }
         // Send message
         const response = await fetch("/api/set-vote", requestOptions)
+        const responseData = await response.json()
+        console.log(responseData)
+        resolve(responseData)
+    })
+}
+
+export const submitVote = async (cycleId) => {
+    console.log("submite vote")
+    return new Promise(async (resolve, reject) => {
+        // Get token
+        const token = await getTokenSilently()
+        // Set message options
+        const requestOptions = {
+            method: "POST",
+            redirect: "follow",
+            body: JSON.stringify({
+                cycleId: cycleId,
+                authorization: token
+            })
+        }
+        // Send message
+        const response = await fetch("/api/submit-vote", requestOptions)
+        const responseData = await response.json()
+        console.log(responseData)
+        resolve(responseData)
+    })
+}
+
+export const unsubmitVote = async (cycleId) => {
+    console.log("unsubmite vote")
+    return new Promise(async (resolve, reject) => {
+        // Get token
+        const token = await getTokenSilently()
+        // Set message options
+        const requestOptions = {
+            method: "POST",
+            redirect: "follow",
+            body: JSON.stringify({
+                cycleId: cycleId,
+                authorization: token
+            })
+        }
+        // Send message
+        const response = await fetch("/api/unsubmit-vote", requestOptions)
         const responseData = await response.json()
         console.log(responseData)
         resolve(responseData)

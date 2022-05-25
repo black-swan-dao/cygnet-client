@@ -8,9 +8,11 @@
   if (item._type === "resource") path = "resources"
   if (item._type === "user") path = "peers"
   if (item._type === "proposal") {
-    if (phase === "proposal") path = "editor"
-    if (phase === "vote") path = "proposal"
-    if (phase === "result") path = "proposal"
+    if (phase === "proposal" && !item.submitted) {
+      path = "editor"
+    } else {
+      path = "proposal"
+    }
   }
 </script>
 

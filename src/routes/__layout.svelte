@@ -118,13 +118,12 @@
     margin-left: auto;
     margin-right: auto;
     max-width: 1240px;
-    margin-top: 100px;
+    margin-top: 70px;
     min-height: 100vh;
     position: relative;
     z-index: 100;
 
     @include screen-size("small") {
-      margin-top: 70px;
       width: calc(100% - 20px);
     }
   }
