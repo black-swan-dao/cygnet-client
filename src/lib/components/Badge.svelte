@@ -11,6 +11,7 @@
     border: 1px solid var(--main-color);
     color: var(--main-color);
     margin-right: 5px;
+    margin-bottom: 5px;
     padding: 4px 7px;
     border-radius: 5px;
     font-family: $secondary-font;

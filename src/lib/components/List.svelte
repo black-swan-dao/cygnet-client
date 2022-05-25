@@ -18,7 +18,6 @@
 
   .list {
     padding-bottom: 40px;
-    max-width: calc(100vw - 40px);
 
     .body {
       width: 100%;

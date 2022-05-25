@@ -121,6 +121,7 @@
 
     @include screen-size("small") {
       margin-top: 70px;
+      width: calc(100% - 20px);
     }
   }
 </style>

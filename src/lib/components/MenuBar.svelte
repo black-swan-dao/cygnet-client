@@ -160,7 +160,7 @@
     >
       {#if $currentCycle && $currentCycle.title}
         <div class="cycle-title">
-          <strong>Cycle:</strong>
+          <span class="cycle-label">Cycle:</span>
           {$currentCycle.title}
           {#if $availableCycles.length > 1}
             <span class="arrow-down">⌄</span>
@@ -283,11 +283,12 @@
       top: 0;
       right: 0;
       height: 50px;
-      padding-right: 20px;
-      padding-left: 20px;
+      padding-right: 10px;
+      padding-left: 10px;
       display: flex;
       justify-content: center;
       align-items: center;
+      color: $background-color;
     }
   }
 
@@ -315,8 +316,8 @@
       color: $light-color;
 
       @include screen-size("small") {
-        padding-left: 20px;
-        padding-right: 20px;
+        padding-left: 10px;
+        padding-right: 10px;
         height: 100%;
         display: flex;
         justify-content: center;
@@ -332,6 +333,10 @@
       width: 50%;
       display: flex;
 
+      @include screen-size("small") {
+        width: 100%;
+      }
+
       .title {
         height: 100%;
         display: flex;
@@ -340,6 +345,12 @@
         padding-left: 20px;
         color: inherit;
         text-decoration: none;
+
+        @include screen-size("small") {
+          padding-left: 10px;
+          padding-right: 10px;
+          font-weight: bold;
+        }
 
         &:hover {
           background: var(--main-color-two);
@@ -369,10 +380,21 @@
         min-width: 140px;
         overflow: hidden;
 
+        @include screen-size("small") {
+          min-width: unset;
+        }
+
         .cycle-title {
           width: 100%;
           white-space: nowrap;
           text-overflow: ellipsis;
+
+          .cycle-label {
+            font-weight: bold;
+            @include screen-size("small") {
+              display: none;
+            }
+          }
         }
 
         &.action {
@@ -384,7 +406,9 @@
         }
 
         @include screen-size("small") {
-          display: none;
+          padding-right: 10px;
+          padding-left: 10px;
+          border-right: 1px solid $secondary-two;
         }
       }
 
@@ -498,6 +522,7 @@
     position: fixed;
     top: 50px;
     left: 0px;
+    width: 200px;
     background: var(--main-color);
     color: $light-color;
     font-size: $font-size-small;

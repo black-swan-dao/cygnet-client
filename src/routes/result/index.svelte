@@ -72,7 +72,7 @@
 
   .result-header {
     width: 100%;
-    height: 120px;
+    height: 100px;
     border: 2px solid var(--main-color);
     display: flex;
     font-size: $font-size-x-small;
@@ -133,12 +133,12 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: $font-size-normal;
+        font-size: $font-size-small;
         font-family: $numeral-font;
         color: $foreground-color;
 
         @include screen-size("small") {
-          height: 60px;
+          height: 40px;
         }
       }
     }

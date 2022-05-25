@@ -11,16 +11,12 @@
   @import "../../variables.scss";
 
   .cls-1 {
-    fill: #000000;
+    fill: currentColor;
   }
 
   .cls-2 {
     fill: none;
   }
-
-  //   polygon {
-  //     stroke: currentcolor;
-  //   }
 
   svg {
     width: 42px;

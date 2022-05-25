@@ -47,6 +47,10 @@
     z-index: 100;
     color: $foreground-color;
 
+    h1 {
+      margin-bottom: 0;
+    }
+
     .logo-container {
       max-width: 90%;
 
@@ -78,7 +82,7 @@
 
       &:hover {
         background: var(--main-color);
-        color: $foreground-color;
+        color: $background-color;
       }
     }
   }

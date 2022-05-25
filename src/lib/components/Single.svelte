@@ -65,15 +65,15 @@
         <h1>{item.name}</h1>
       {/if}
       <!-- AUTHORS -->
-      <div class="authors">
-        {#if item.authors && Array.isArray(item.authors)}
+      {#if item.authors && Array.isArray(item.authors)}
+        <div class="authors">
           {#each item.authors as author, index (author._id)}
             <a href={`/peers/${get(author, "slug.current")}`} sveltekit:prefetch
               >{author.name}</a
             >{#if index < item.authors.length - 1},&nbsp;{/if}
           {/each}
-        {/if}
-      </div>
+        </div>
+      {/if}
       <!-- ROLES -->
       {#if item.roles && Array.isArray(item.roles)}
         <div class="roles">
@@ -139,8 +139,7 @@
       font-family: $secondary-font;
       font-size: $font-size-small;
       border: 1px solid $foreground-color;
-      padding: 3px 7px;
-      padding-top: 5px;
+      padding: 5px 10px;
       border-radius: 3px;
       text-decoration: none;
       color: $foreground-color;
@@ -149,6 +148,7 @@
       &:hover {
         background: var(--main-color-two);
         border: 1px solid var(--main-color-two);
+        color: $background-color;
       }
     }
   }
@@ -196,6 +196,7 @@
         &.left {
           margin-right: 20px;
           overflow: hidden;
+          padding-bottom: 40px;
 
           @include screen-size("small") {
             order: 2;
@@ -281,5 +282,11 @@
       // font-weight: bold;
       font-size: $font-size-small;
     }
+  }
+
+  .roles {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 100%;
   }
 </style>

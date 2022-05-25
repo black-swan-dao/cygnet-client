@@ -52,6 +52,10 @@
     border-right: 2px solid var(--main-color);
     user-select: none;
 
+    @include screen-size("small") {
+      height: 60px;
+    }
+
     .information {
       width: 100%;
       height: 100%;
@@ -68,7 +72,7 @@
       }
 
       @include screen-size("small") {
-        height: 80px;
+        height: 60px;
       }
     }
 
@@ -85,7 +89,7 @@
       border-top: 2px solid var(--main-color);
 
       @include screen-size("small") {
-        min-width: 80px;
+        min-width: 60px;
       }
     }
 

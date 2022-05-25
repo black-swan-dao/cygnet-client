@@ -36,7 +36,9 @@
   <!-- AUTHORS -->
   {#if phase !== "vote" && item.authors && Array.isArray(item.authors)}
     {#each item.authors as author (author._id)}
-      <Badge text={author.name} />
+      <div class="author">
+        <Badge text={author.name} />
+      </div>
     {/each}
   {/if}
   <!-- ROLES -->
@@ -60,7 +62,6 @@
     display: flex;
     align-items: center;
     overflow: hidden;
-    padding: 5px;
     cursor: pointer;
     color: inherit;
     text-decoration: none;
@@ -78,6 +79,12 @@
       margin-left: 10px;
       position: relative;
 
+      @include screen-size("small") {
+        width: 25px;
+        height: 25px;
+        min-width: 25px;
+      }
+
       img {
         width: 100%;
         height: 100%;
@@ -94,6 +101,10 @@
       position: relative;
       top: 2px;
       min-width: 100px;
+
+      @include screen-size("small") {
+        font-size: $font-size-small;
+      }
     }
 
     .author {

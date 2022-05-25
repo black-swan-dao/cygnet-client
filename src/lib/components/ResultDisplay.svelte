@@ -44,6 +44,10 @@
     display: flex;
     border-top: 2px solid var(--main-color);
 
+    @include screen-size("small") {
+      display: none;
+    }
+
     .inner {
       width: 100%;
       background: var(--highlight-color);
@@ -52,7 +56,7 @@
   }
 
   .number {
-    width: 160px;
+    width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
@@ -60,6 +64,10 @@
     border-right: 2px solid var(--main-color);
     flex-direction: column;
     border-top: 2px solid var(--main-color);
+
+    @include screen-size("small") {
+      border-right: none;
+    }
 
     .label {
       height: 25px;
@@ -70,6 +78,11 @@
       width: 100%;
       text-align: center;
       line-height: 25px;
+
+      @include screen-size("small") {
+        height: 20px;
+        line-height: 20px;
+      }
     }
 
     .content {
@@ -77,6 +90,10 @@
       display: flex;
       justify-content: center;
       align-items: center;
+
+      @include screen-size("small") {
+        font-size: $font-size-small;
+      }
     }
   }
 </style>
