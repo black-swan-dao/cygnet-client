@@ -30,7 +30,6 @@ export const post = async (event) => {
                 _type: "reference"
             },
             result: [],
-            resultByResource: [],
             votesByUser: [],
             totalVoteCredits: 0,
             totalEffectiveVotes: 0,
