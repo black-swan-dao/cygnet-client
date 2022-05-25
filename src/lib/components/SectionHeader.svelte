@@ -25,6 +25,7 @@
 
     @include screen-size("small") {
       font-size: $font-size-mid;
+      margin-bottom: 20px;
     }
 
     h2 {

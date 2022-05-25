@@ -119,7 +119,6 @@
         Connect ETH address
       </a>
     {/if}
-
     <div class="user-switch-item" on:click={logout}>Log out</div>
   </div>
 {/if}
@@ -236,6 +235,9 @@
           <div>{navItem.label}</div>
         </a>
       {/each}
+      <div class="menu-item">
+        <div class="log-out" on:click={logout}>Log out</div>
+      </div>
     </div>
   </div>
 {/if}
@@ -266,10 +268,11 @@
         text-decoration: none;
         display: block;
         margin-bottom: 20px;
+        overflow: visible;
+        box-sizing: border-box;
 
         div {
           display: inline-block;
-          border-bottom: 2px solid var(--main-color);
         }
 
         &:active {
@@ -349,6 +352,7 @@
         @include screen-size("small") {
           padding-left: 10px;
           padding-right: 10px;
+          font-size: $font-size-x-small;
           font-weight: bold;
         }
 
@@ -382,6 +386,9 @@
 
         @include screen-size("small") {
           min-width: unset;
+          font-size: $font-size-x-small;
+          padding-right: 10px;
+          padding-left: 10px;
         }
 
         .cycle-title {
@@ -529,6 +536,10 @@
     z-index: 100000;
     box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.6);
 
+    @include screen-size("small") {
+      font-size: $font-size-x-small;
+    }
+
     .cycle-switch-item {
       padding: 10px;
       cursor: pointer;
@@ -567,5 +578,12 @@
     position: relative;
     top: -3px;
     margin-left: 3px;
+  }
+
+  .log-out {
+    cursor: pointer;
+    font-size: $font-size-normal;
+    border: 1px solid $background-color;
+    padding: 10px;
   }
 </style>

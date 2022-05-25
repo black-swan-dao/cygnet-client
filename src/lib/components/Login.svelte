@@ -47,6 +47,10 @@
     z-index: 100;
     color: $foreground-color;
 
+    @include screen-size("small") {
+      height: 90vh;
+    }
+
     h1 {
       margin-bottom: 0;
     }
