@@ -12,9 +12,7 @@
     let sliderWidth = e.target.offsetWidth
     let clickPosition = e.offsetX
     let clickPercentage = (clickPosition / sliderWidth) * 100
-    // console.log(clickPercentage)
     let newVoiceCredits = Math.round((clickPercentage - 50) * 2)
-    // console.log("newVoiceCredits", newVoiceCredits)
     dispatch("updateVoiceCredits", {
       voiceCredits: newVoiceCredits,
     })
@@ -71,7 +69,29 @@
     document.removeEventListener("touchmove", touchEventListener)
   }
 
-  // $: console.log("blockerWidth", blockerWidth)
+  const max = () => {
+    let newVoiceCredits = 0
+    if (voiceCredits < 0) {
+      newVoiceCredits = Math.abs(voiceCredits) + $remainingVoiceCredits
+    } else {
+      newVoiceCredits = voiceCredits + $remainingVoiceCredits
+    }
+    dispatch("updateVoiceCredits", {
+      voiceCredits: newVoiceCredits,
+    })
+  }
+
+  const min = () => {
+    let newVoiceCredits = 0
+    if (voiceCredits > 0) {
+      newVoiceCredits = -($remainingVoiceCredits + voiceCredits)
+    } else {
+      newVoiceCredits = voiceCredits - $remainingVoiceCredits
+    }
+    dispatch("updateVoiceCredits", {
+      voiceCredits: newVoiceCredits,
+    })
+  }
 </script>
 
 <div class="custom-slider-container">
@@ -79,37 +99,37 @@
     class="slider"
     class:drag
     on:mousedown={e => {
-      console.log("__ Mouse down", e)
+      // console.log("__ Mouse down", e)
       startDrag()
     }}
     on:mouseup={e => {
-      console.log("__ Mouse up")
+      // console.log("__ Mouse up")
       endDrag()
     }}
     on:mouseleave={e => {
-      console.log("__ Mouse leave")
+      // console.log("__ Mouse leave")
       endDrag()
     }}
     on:mouseenter={e => {
-      console.log("__ Mouse enter", e)
+      // console.log("__ Mouse enter", e)
       if (e.buttons === 1) {
         startDrag()
       }
     }}
     on:touchstart={e => {
-      console.log("__ Touch start", e)
+      // console.log("__ Touch start", e)
       startDrag()
     }}
     on:touchend={e => {
-      console.log("__ Touch end")
+      // console.log("__ Touch end")
       endDrag()
     }}
     on:touchcancel={e => {
-      console.log("__ Touch cancel")
+      // console.log("__ Touch cancel")
       endDrag()
     }}
     on:click={e => {
-      console.log("click")
+      // console.log("click")
       setMarkerPosition(e)
     }}
   />
@@ -117,8 +137,8 @@
   <div class="blocker-low" style={`width: ${blockerWidth}%;`} />
   <div class="marker" style={`left: ${markerPosition}%;`} />
   <div class="center-line" />
-  <!-- <div class="max-button">+</div>
-  <div class="min-button">-</div> -->
+  <div class="max-button" on:click={max}>+</div>
+  <div class="min-button" on:click={min}>-</div>
 </div>
 
 <style lang="scss">
@@ -128,32 +148,44 @@
 
   .max-button {
     position: absolute;
-    right: -18px;
-    top: 2px;
-    // background: rgba(255, 255, 255, 0.8);
+    right: -20px;
+    top: 0px;
     width: 20px;
     height: 20px;
     text-align: center;
     cursor: pointer;
-    color: $light-color;
-    border: 1px solid $foreground-color;
-    border-radius: 50%;
     line-height: 18px;
+    color: $foreground-color;
+    background: $background-color;
+
+    &:hover {
+      background: var(--highlight-color);
+      opacity: 1;
+    }
+    @include screen-size("small") {
+      display: none;
+    }
   }
 
   .min-button {
     position: absolute;
-    left: -18px;
-    top: 2px;
-    // background: rgba(255, 255, 255, 0.8);
+    left: -20px;
+    top: 0px;
     width: 20px;
     height: 20px;
     text-align: center;
     cursor: pointer;
-    color: $light-color;
-    border: 1px solid $foreground-color;
-    border-radius: 50%;
     line-height: 16px;
+    color: $foreground-color;
+    background: $background-color;
+
+    &:hover {
+      background: var(--highlight-color);
+      opacity: 1;
+    }
+    @include screen-size("small") {
+      display: none;
+    }
   }
 
   .custom-slider-container {

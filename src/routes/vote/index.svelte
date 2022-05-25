@@ -1,6 +1,5 @@
 <script>
   import { profileMeta } from "$lib/authentication.js"
-  import get from "lodash/get.js"
   import debounce from "lodash/debounce.js"
   import List from "$lib/components/List.svelte"
   import SectionHeader from "$lib/components/SectionHeader.svelte"
@@ -81,7 +80,7 @@
     // !!! HACK
     setTimeout(() => {
       votesLoaded = true
-    }, 2000)
+    }, 5000)
   })
 </script>
 
@@ -90,7 +89,7 @@
   {#await voteDoc then voteDoc}
     <div class="vote-header">
       <div class="item small">
-        <div class="label">Remaining voice credits</div>
+        <div class="label">Voice credits</div>
         <div class="content">{$remainingVoiceCredits}</div>
       </div>
       <div class="item small">

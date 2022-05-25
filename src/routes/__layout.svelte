@@ -118,7 +118,7 @@
     margin-left: auto;
     margin-right: auto;
     max-width: 1240px;
-    margin-top: 70px;
+    margin-top: 90px;
     min-height: 100vh;
     position: relative;
     z-index: 100;

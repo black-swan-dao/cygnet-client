@@ -66,7 +66,6 @@ export const submitProposal = async proposal => {
         // Send message
         const response = await fetch("/api/submit-proposal", requestOptions)
         const responseData = await response.json()
-        console.log(responseData)
     } catch (e) {
         console.log(e.message)
     }
@@ -89,20 +88,17 @@ export const getVote = cycleId => {
         // Send message
         const response = await fetch("/api/get-vote", requestOptions)
         const responseData = await response.json()
-        console.log(responseData)
         let tempVoteAllocation = {}
         if (responseData.voteAllocation && Array.isArray(responseData.voteAllocation)) {
             responseData.voteAllocation.forEach(v => {
                 tempVoteAllocation[v.proposal._ref] = v.voteCredits
             })
         }
-        console.log('tempVoteAllocation', tempVoteAllocation)
         resolve({ lastSavedAt: responseData._updatedAt, submitted: responseData.submitted, votes: tempVoteAllocation })
     })
 }
 
 export const setVote = async (cycleId, voteAllocation, voteMultiplier, voteMultiplierRole, submitted) => {
-    console.log("!!! SET VOTE", cycleId, voteAllocation)
     return new Promise(async (resolve, reject) => {
         // Get token
         const token = await getTokenSilently()
@@ -121,13 +117,11 @@ export const setVote = async (cycleId, voteAllocation, voteMultiplier, voteMulti
         // Send message
         const response = await fetch("/api/set-vote", requestOptions)
         const responseData = await response.json()
-        console.log(responseData)
         resolve(responseData)
     })
 }
 
 export const submitVote = async (cycleId) => {
-    console.log("submite vote")
     return new Promise(async (resolve, reject) => {
         // Get token
         const token = await getTokenSilently()
@@ -143,13 +137,11 @@ export const submitVote = async (cycleId) => {
         // Send message
         const response = await fetch("/api/submit-vote", requestOptions)
         const responseData = await response.json()
-        console.log(responseData)
         resolve(responseData)
     })
 }
 
 export const unsubmitVote = async (cycleId) => {
-    console.log("unsubmite vote")
     return new Promise(async (resolve, reject) => {
         // Get token
         const token = await getTokenSilently()
@@ -165,7 +157,6 @@ export const unsubmitVote = async (cycleId) => {
         // Send message
         const response = await fetch("/api/unsubmit-vote", requestOptions)
         const responseData = await response.json()
-        console.log(responseData)
         resolve(responseData)
     })
 }
