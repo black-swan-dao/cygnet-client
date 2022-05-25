@@ -103,6 +103,10 @@
     line-height: 1.4em;
   }
 
+  a {
+    color: inherit;
+  }
+
   body,
   html {
     font-family: $primary-font;

@@ -13,7 +13,10 @@
 </script>
 
 {#if $currentCycle.phase == "proposal"}
-  <SectionHeader title="Proposals" description={$currentCycle.textProposal} />
+  <SectionHeader
+    title="Your Proposals"
+    description={$currentCycle.textProposal}
+  />
 
   <div class="proposal-header">
     <div class="item">
@@ -29,7 +32,12 @@
     <div class="header">Your Proposals</div>
     <List list={$proposalsInCycle} phase="proposal" />
   {:else}
-    <div class="header">No proposals yet...</div>
+    <div class="header">
+      You have not created any proposals yet. <a
+        href="/editor"
+        sveltekit:prefetch>Click here to get started!</a
+      >
+    </div>
   {/if}
 {:else}
   <Redirector />
@@ -45,7 +53,6 @@
     margin-bottom: 40px;
 
     @include screen-size("small") {
-      justify-content: flex-end;
       flex-wrap: wrap;
     }
 
