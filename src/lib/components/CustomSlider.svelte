@@ -160,6 +160,7 @@
 
     &:hover {
       background: var(--highlight-color);
+      color: $background-color;
       opacity: 1;
     }
     @include screen-size("small") {
@@ -181,6 +182,7 @@
 
     &:hover {
       background: var(--highlight-color);
+      color: $background-color;
       opacity: 1;
     }
     @include screen-size("small") {

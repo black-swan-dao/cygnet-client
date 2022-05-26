@@ -1,4 +1,6 @@
 import { getTokenSilently } from "$lib/authentication.js"
+import { voteMultiplier } from "$lib/authentication"
+import { get } from 'svelte/store'
 
 
 export const uploadImage = file => {
@@ -98,7 +100,7 @@ export const getVote = cycleId => {
     })
 }
 
-export const setVote = async (cycleId, voteAllocation, voteMultiplier, voteMultiplierRole, submitted) => {
+export const setVote = async (cycleId, voteAllocation, voteMultiplier, voteMultiplierRole) => {
     return new Promise(async (resolve, reject) => {
         // Get token
         const token = await getTokenSilently()

@@ -8,7 +8,9 @@
     totalEffectiveVotes,
   } from "$lib/voting.js"
   import { onMount } from "svelte"
-  import { profileMeta } from "$lib/authentication"
+  import { voteMultiplier } from "$lib/authentication"
+  import { currentCycle } from "$lib/cycles.js"
+  import get from "lodash/get.js"
 
   export let proposal = {}
   export let initialVote = {}
@@ -19,9 +21,7 @@
   // The quadratic voting function
   let effectiveVotes = 0
   $: effectiveVotes =
-    Math.sqrt(Math.abs(voiceCredits)) *
-    ($profileMeta.voteMultiplier || 1) *
-    voteSign
+    Math.sqrt(Math.abs(voiceCredits)) * $voteMultiplier.weight * voteSign
 
   // Update when number of global state allocated vote credits changes
   $: updateVoteAllocation(proposal._id, voiceCredits)
@@ -35,8 +35,7 @@
   $: effectiveVotesPercentage =
     effectiveVotes === 0
       ? 0
-      : ((Math.abs(effectiveVotes) / $totalEffectiveVotes) * 100) /
-        $profileMeta.voteMultiplier
+      : (Math.abs(effectiveVotes) / $totalEffectiveVotes) * 100
 
   $: if (eVBar && eVBar._tippy) {
     eVBar._tippy.setContent(
@@ -96,12 +95,16 @@
       </div>
     </div>
     <!-- (3) VOTE MULTIPLIER -->
-    <div class="vote-multiplier" bind:this={eVBar}>
-      <div class="number">
-        <div class="label">Vote weight</div>
-        <div class="content">{$profileMeta.voteMultiplier}×</div>
+    {#if $currentCycle.useVotingWeights}
+      <div class="vote-multiplier">
+        <div class="number">
+          <div class="label">Vote weight</div>
+          <div class="content">
+            {$voteMultiplier.weight}×
+          </div>
+        </div>
       </div>
-    </div>
+    {/if}
     <!-- (4) EFFECTIVE VOTES -->
     <div class="effective-votes" bind:this={eVBar}>
       <div class="number">

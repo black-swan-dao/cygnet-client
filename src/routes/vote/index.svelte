@@ -1,5 +1,4 @@
 <script>
-  import { profileMeta } from "$lib/authentication.js"
   import debounce from "lodash/debounce.js"
   import List from "$lib/components/List.svelte"
   import SectionHeader from "$lib/components/SectionHeader.svelte"
@@ -24,11 +23,15 @@
     unsubmitVote,
   } from "$lib/api-interface.js"
   import { onMount } from "svelte"
+  import { voteMultiplier } from "$lib/authentication"
+  import tippy from "tippy.js"
+  import "tippy.js/dist/tippy.css"
 
   let lastSavedAt = false
   let votesLoaded = false
   let saving = false
   let submitted = false
+  let voteWeightElement = false
 
   // Save votes on change
   voteAllocation.subscribe(
@@ -41,9 +44,8 @@
       setVote(
         $currentCycle._id,
         $voteAllocation,
-        $profileMeta.voteMultiplier,
-        $profileMeta.voteMultiplierRole || "Audience",
-        false
+        $voteMultiplier.weight,
+        $voteMultiplier.role
       ).then(v => {
         lastSavedAt = v._updatedAt
         saving = false
@@ -80,6 +82,11 @@
     // !!! HACK
     setTimeout(() => {
       votesLoaded = true
+      if (voteWeightElement) {
+        tippy(voteWeightElement, {
+          content: "Role: " + $voteMultiplier.role,
+        })
+      }
     }, 5000)
   })
 </script>
@@ -96,6 +103,14 @@
         <div class="label">Total effective votes</div>
         <div class="content">{$totalEffectiveVotes.toFixed(2)}</div>
       </div>
+      {#if $currentCycle.useVotingWeights}
+        <div class="item small phone-hide">
+          <div class="label">Vote weight</div>
+          <div class="content" bind:this={voteWeightElement}>
+            {$voteMultiplier.weight}×
+          </div>
+        </div>
+      {/if}
       <div class="item">
         <div class="label">Vote closing in</div>
         <div class="content"><CountDown /></div>
@@ -182,6 +197,12 @@
         }
       }
 
+      &.phone-hide {
+        @include screen-size("small") {
+          display: none;
+        }
+      }
+
       &.mid {
         width: 360px;
         @include screen-size("small") {
@@ -216,7 +237,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: $font-size-normal;
+        font-size: $font-size-small;
         font-family: $primary-font;
         color: $foreground-color;
         padding-left: 10px;

@@ -1,8 +1,8 @@
 import createAuth0Client from "@auth0/auth0-spa-js"
-import { writable, get } from 'svelte/store';
+import { writable, derived, get } from 'svelte/store';
 import { loadData } from "$lib/sanity.js"
 import { AUTH0_DOMAIN, AUTH0_CLIENT_ID } from "$lib/cygnet-config.js"
-import { voteMultipliers } from "$lib/voting.js"
+import { currentCycle } from '$lib/cycles.js';
 import { CYGNET_ID } from "$lib/data.js";
 
 const DISCORD_PREFIX = "oauth2|discord|"
@@ -36,9 +36,6 @@ export const setProfile = async () => {
             "*[_type == 'user' && _id == $sub][0]",
             { sub: get(profile).sub.replace(DISCORD_PREFIX, "") + '-' + CYGNET_ID }
         )
-        const multiplierRole = sanityProfile.roles.find(r => Object.keys(voteMultipliers).includes(r))
-        sanityProfile.voteMultiplier = voteMultipliers[multiplierRole] || 1
-        sanityProfile.voteMultiplierRole = multiplierRole || false
         sanityProfile.roles.includes('cygnet-admin') ? isAdmin.set(true) : isAdmin.set(false)
     } catch (e) {
         console.log('Error loading profile from Sanity:', e);
@@ -46,6 +43,24 @@ export const setProfile = async () => {
     }
     profileMeta.set(sanityProfile)
 }
+
+export const voteMultiplier = derived(
+    [profileMeta, currentCycle],
+    ([$profileMeta, $currentCycle]) => {
+        let vM = {
+            role: 'Default',
+            weight: 1
+        }
+        if (!$currentCycle.useVotingWeights || !$currentCycle.voteWeights || !$profileMeta || !$profileMeta.roles) return vM
+        $currentCycle.voteWeights.forEach(vW => {
+            console.log(vW)
+            if ($profileMeta.roles.includes(vW.role)) {
+                vM = vW
+            }
+        })
+        return vM
+    }
+);
 
 export const login = async () => {
     await auth0.loginWithRedirect({

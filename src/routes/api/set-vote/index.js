@@ -33,8 +33,8 @@ export const post = async (event) => {
         _type: "reference",
         _ref: userId + '-' + import.meta.env.VITE_CYGNET_ID,
       },
-      voteMultiplier: body.voteMultiplier || 1,
-      voteMultiplierRole: body.voteMultiplierRole || "Audience",
+      voteMultiplier: body.voteMultiplier,
+      voteMultiplierRole: body.voteMultiplierRole,
       submitted: false,
       voteAllocation: []
     }
