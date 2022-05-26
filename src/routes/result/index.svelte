@@ -1,5 +1,6 @@
 <script>
   import List from "$lib/components/List.svelte"
+  import ResultByResource from "$lib/components/ResultByResource.svelte"
   import SectionHeader from "$lib/components/SectionHeader.svelte"
   import Redirector from "$lib/components/Redirector.svelte"
   import { results } from "$lib/data.js"
@@ -20,9 +21,7 @@
         r.proposal.effectiveVotes = r.effectiveVotes
         r.proposal.voteCredits = r.voteCredits
         r.proposal.percentageOfEffectiveVotes =
-          (r.effectiveVotes / Math.abs(currentResult.totalEffectiveVotes)) * 100
-        // r.proposal.percentageOfVoteCredits =
-        //   (r.voteCredits / currentResult.totalVoteCredits) * 100
+          (r.effectiveVotes / Math.abs(currentResult.totalEffectiveVotes)) * 10
         return r.proposal
       })
     }
@@ -58,8 +57,11 @@
         </div>
       </div>
     </div>
-
-    <List {list} phase="result" />
+    {#if $currentCycle.rankResultsByResource}
+      <ResultByResource {list} />
+    {:else}
+      <List {list} phase="result" />
+    {/if}
   {:else}
     <div class="error">No result found</div>
   {/if}

@@ -1,7 +1,6 @@
 import { writable, derived, get } from 'svelte/store';
 import { loadData, client } from "$lib/sanity.js"
 import { currentCycle } from '$lib/cycles.js';
-import { profileMeta } from '$lib/authentication.js';
 import { goto } from '$app/navigation';
 import _ from 'lodash'
 
