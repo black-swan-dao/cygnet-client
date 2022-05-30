@@ -2,13 +2,14 @@
   import Row from "$lib/components/Row.svelte"
   export let list = []
   export let phase = ""
+  export let readonly = false
   export let initialVote = {}
 </script>
 
 <div class="list">
   <div class="body">
     {#each list as item (item._id)}
-      <Row {item} {phase} {initialVote} />
+      <Row {item} {phase} {initialVote} {readonly} />
     {/each}
   </div>
 </div>

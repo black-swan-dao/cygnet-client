@@ -7,6 +7,7 @@
   export let item = {}
   export let phase = ""
   export let initialVote = {}
+  export let readonly = false
 </script>
 
 <div class="row" class:vote={phase === "vote" && item._type === "proposal"}>
@@ -14,7 +15,7 @@
     <Information {item} {phase} />
   </div>
 
-  {#if phase === "proposal" && item._type === "proposal"}
+  {#if phase === "proposal" && item._type === "proposal" && !readonly}
     <div class="actions">
       <SubmitButton {item} />
       {#if !item.submitted}

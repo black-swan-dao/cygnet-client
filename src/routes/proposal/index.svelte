@@ -4,8 +4,25 @@
   import SectionHeader from "$lib/components/SectionHeader.svelte"
   import Redirector from "$lib/components/Redirector.svelte"
   import CountDown from "$lib/components/CountDown.svelte"
-  // import { proposalsInCycleByUser } from "$lib/data.js"
   import { proposalsInCycle } from "$lib/data.js"
+  import { profileMeta } from "$lib/authentication.js"
+
+  let proposalsInCycleByUser = []
+  $: proposalsInCycleByUser = $proposalsInCycle.filter(p => {
+    if (!p.authors || p.authors.length === 0) return false
+    const authorIds = get(p, "authors", []).map(a => a._id)
+    const isAuthor = authorIds.includes($profileMeta._id)
+    if (isAuthor) return true
+  })
+
+  let proposalsInCycleByOthers = []
+  $: proposalsInCycleByOthers = $proposalsInCycle.filter(p => {
+    if (!p.authors || p.authors.length === 0) return false
+    const authorIds = get(p, "authors", []).map(a => a._id)
+    const isAuthor = !authorIds.includes($profileMeta._id)
+    const isSubmitted = p.submitted
+    if (isAuthor && isSubmitted) return true
+  })
 
   import { currentCycle } from "$lib/cycles.js"
   import { currentSection } from "$lib/ui.js"
@@ -13,10 +30,7 @@
 </script>
 
 {#if $currentCycle.phase == "proposal"}
-  <SectionHeader
-    title="Your Proposals"
-    description={$currentCycle.textProposal}
-  />
+  <SectionHeader title="Proposals" description={$currentCycle.textProposal} />
 
   <div class="proposal-header">
     <div class="item">
@@ -28,9 +42,9 @@
     </div>
   </div>
 
-  {#if $proposalsInCycle && $proposalsInCycle.length > 0}
+  {#if proposalsInCycleByUser && proposalsInCycleByUser.length > 0}
     <div class="header">Your Proposals</div>
-    <List list={$proposalsInCycle} phase="proposal" />
+    <List list={proposalsInCycleByUser} phase="proposal" />
   {:else}
     <div class="header">
       You have not created any proposals yet. <a
@@ -38,6 +52,11 @@
         sveltekit:prefetch>Click here to get started!</a
       >
     </div>
+  {/if}
+
+  {#if proposalsInCycleByOthers && proposalsInCycleByOthers.length > 0}
+    <div class="header other-participants">Other Participants' Proposals</div>
+    <List list={proposalsInCycleByOthers} phase="proposal" readonly={true} />
   {/if}
 {:else}
   <Redirector />
@@ -94,6 +113,11 @@
     font-weight: bold;
     margin-bottom: 10px;
     color: var(--main-color);
+    &.other-participants {
+      border-top: 1px solid var(--main-color);
+      padding-top: 20px;
+      margin-top: 20px;
+    }
   }
 
   .button {
