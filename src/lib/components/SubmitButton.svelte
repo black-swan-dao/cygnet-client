@@ -1,5 +1,6 @@
 <script>
-  import { submitProposal } from "$lib/api-interface.js"
+  import { submitProposal, unsubmitProposal } from "$lib/api-interface.js"
+  import Unlocked from "$lib/graphics/Unlocked.svelte"
   export let item = {}
 </script>
 
@@ -7,12 +8,20 @@
   class="submit-button"
   class:submitted={item.submitted}
   on:click={() => {
-    item.submitted = true
-    submitProposal(item)
+    if (item.submitted) {
+      // item.submitted = false
+      unsubmitProposal(item)
+    } else {
+      // item.submitted = true
+      submitProposal(item)
+    }
   }}
 >
   <div>
-    {#if item.submitted}✓{:else}Submit{/if}
+    <span class="main-text">
+      {#if item.submitted}✓{:else}Submit{/if}
+    </span>
+    <span class="unlock"><Unlocked /></span>
   </div>
 </div>
 
@@ -37,15 +46,32 @@
       min-width: 60px;
     }
 
-    &.submitted {
-      cursor: default;
-      pointer-events: none;
-      background: var(--main-color);
+    .unlock {
+      display: none;
     }
 
     &:hover {
       background: var(--main-color);
       color: $light-color;
+    }
+
+    &.submitted {
+      // cursor: default;
+      // pointer-events: none;
+      background: var(--main-color);
+
+      &:hover {
+        background: unset;
+        color: black;
+
+        .unlock {
+          display: block;
+        }
+
+        .main-text {
+          display: none;
+        }
+      }
     }
   }
 </style>

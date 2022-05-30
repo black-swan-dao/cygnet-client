@@ -73,6 +73,29 @@ export const submitProposal = async proposal => {
     }
 }
 
+export const unsubmitProposal = async proposal => {
+    try {
+        // Get token
+        const token = await getTokenSilently()
+        // Prepare message body
+        const rawBody = JSON.stringify({
+            proposalId: proposal._id,
+            authorization: token
+        })
+        // Set message options
+        const requestOptions = {
+            method: "POST",
+            body: rawBody,
+            redirect: "follow",
+        }
+        // Send message
+        const response = await fetch("/api/unsubmit-proposal", requestOptions)
+        const responseData = await response.json()
+    } catch (e) {
+        console.log(e.message)
+    }
+}
+
 export const getVote = cycleId => {
     console.log("!!! GET VOTE", cycleId)
     return new Promise(async (resolve, reject) => {
