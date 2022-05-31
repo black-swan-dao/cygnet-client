@@ -35,11 +35,11 @@
     "jsonwebtoken": "^8.5.1",
     "jwks-rsa": "^2.0.5",
     "lodash": "^4.17.21",
+    "marked": "^4.0.16",
     "nanoid": "^3.2.0",
     "query-string": "^7.1.1",
     "slugify": "^1.6.5",
     "svelte-loading-spinners": "^0.1.7",
-    "svelte-markdown": "^0.2.2",
     "svelte-select": "^4.4.7",
     "tippy.js": "^6.3.7",
     "uuid": "^8.3.2"

@@ -1,7 +1,7 @@
 <script>
   import { urlFor } from "$lib/sanity.js"
   import get from "lodash/get.js"
-  import SvelteMarkdown from "svelte-markdown"
+  import { marked } from "marked"
   import Badge from "$lib/components/Badge.svelte"
   import { submittedProposalsInCycle } from "$lib/data.js"
   import { currentCycle } from "$lib/cycles.js"
@@ -21,6 +21,21 @@
         "slug.current",
         ""
       )
+
+  const renderer = new marked.Renderer()
+  const linkRenderer = renderer.link
+  renderer.link = (href, title, text) => {
+    const localLink = href.startsWith(
+      `${location.protocol}//${location.hostname}`
+    )
+    const html = linkRenderer.call(renderer, href, title, text)
+    return localLink
+      ? html
+      : html.replace(
+          /^<a /,
+          `<a target="_blank" rel="noreferrer noopener nofollow" `
+        )
+  }
 
   $: if (item._type == "proposal") {
     proposalIndex = $submittedProposalsInCycle.findIndex(
@@ -84,7 +99,7 @@
       {/if}
       <!-- DESCRIPTION -->
       <div class="description">
-        <SvelteMarkdown source={item.content} />
+        {@html marked.parse(item.content, { renderer })}
       </div>
       <!-- RESOURCES -->
       {#if item.resources && Array.isArray(item.resources) && item.resources.length > 0}
