@@ -38,7 +38,7 @@ export const post = async (event) => {
         // Get all resources for this cycle
         const resources = await loadData("*[_type == 'resource' && cycle._ref == $cycleId]", { cycleId: cycleId })
         // Get all vote documents for this cycle
-        const votes = await loadData("*[_type == 'vote' && cycle._ref == $cycleId]", { cycleId: cycleId })
+        const votes = await loadData("*[_type == 'vote' && cycle._ref == $cycleId && submitted == true]", { cycleId: cycleId })
         // ====>
         const combinedVoteAllocations = votes.flatMap(vote => vote.voteAllocation)
         // ====>
