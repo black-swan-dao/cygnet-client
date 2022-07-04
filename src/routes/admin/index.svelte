@@ -1,10 +1,26 @@
 <script>
+  import { toPlainText, fromPlainText } from "$lib/sanity.js"
   import { isAdmin } from "$lib/authentication.js"
-  import { currentCycle } from "$lib/cycles.js"
+  import { currentCycle, setAvailableCycles } from "$lib/cycles.js"
   import Redirector from "$lib/components/Redirector.svelte"
-  import { triggerCount } from "$lib/api-interface.js"
+  import ImageUpload from "$lib/components/ImageUpload.svelte"
+  import List from "$lib/components/List.svelte"
+  import LoadingIndicator from "$lib/components/LoadingIndicator.svelte"
+  import { triggerCount, saveAbout } from "$lib/api-interface.js"
   import { currentSection, dateTimeFormat } from "$lib/ui.js"
-  import { results } from "$lib/data.js"
+  import {
+    results,
+    instance,
+    proposalsInCycle,
+    usersInCycle,
+    cycles,
+  } from "$lib/data.js"
+  import { Tabs, TabList, TabPanel, Tab } from "$lib/components/tabs/tabs.js"
+  import get from "lodash/get.js"
+
+  let processing = false
+  let bigLogoRef = $instance.bigLogo
+  let smallLogoRef = $instance.smallLogo
 
   currentSection.set("admin")
 
@@ -13,37 +29,196 @@
     result => result.cycle._id === $currentCycle._id
   )
 
+  let about = {
+    mainColor: $instance.mainColor,
+    highlightColor: $instance.highlightColor,
+    preLoginText: toPlainText(get($instance, "preLoginText.content")),
+    landingPageText: toPlainText(get($instance, "landingPageText.content")),
+  }
+
   const countVote = () => {
     triggerCount($currentCycle._id)
+  }
+
+  const createCycle = () => {
+    console.log("create cycle")
+    // saveCycle()
+  }
+
+  const deleteCycle = () => {
+    console.log("create cycle")
+    // deleteCycle()
+  }
+
+  const updateAbout = async () => {
+    processing = true
+    console.log("Save about")
+    console.log(about)
+    console.log("bigLogoRef", bigLogoRef)
+    console.log("smallLogoRef", smallLogoRef)
+    const message = {
+      mainColor: about.mainColor,
+      highlightColor: about.highlightColor,
+      bigLogo: bigLogoRef,
+      smallLogo: smallLogoRef,
+      preLoginText: {
+        _type: "simpleEditor",
+        content: fromPlainText(about.preLoginText),
+      },
+      landingPageText: {
+        _type: "simpleEditor",
+        content: fromPlainText(about.landingPageText),
+      },
+    }
+    console.log(message)
+    await saveAbout(message)
+    processing = false
   }
 </script>
 
 {#if $isAdmin}
-  <h2>Admin</h2>
+  {#if processing}
+    <LoadingIndicator dimmed={true} />
+  {/if}
 
-  <div class="section count-vote">
-    <div class="btn" on:click={countVote}>
-      Count Vote for <strong>{$currentCycle.title}</strong>
-    </div>
-    {#if currentResult && currentResult._updatedAt}
-      <div class="date">
-        <strong>Calculated on:</strong>
-        {dateTimeFormat(currentResult._updatedAt)}
+  <Tabs>
+    <TabList>
+      <Tab>About</Tab>
+      <Tab>Cycles</Tab>
+      <Tab>Users</Tab>
+      <Tab>Proposals</Tab>
+      <Tab>Votes</Tab>
+      <Tab>Results</Tab>
+    </TabList>
+
+    <!-- ABOUT -->
+    <TabPanel>
+      <h2>About</h2>
+      <div class="section">
+        <div>
+          <!-- BIG LOGO -->
+          <div class="sub-section">
+            <label>Big logo</label>
+            <ImageUpload
+              imageRef={bigLogoRef}
+              on:updateImageRef={e => {
+                bigLogoRef = e.detail.ref
+              }}
+            />
+          </div>
+          <!-- SMALL LOGO -->
+          <div class="sub-section">
+            <label>Small logo</label>
+            <ImageUpload
+              imageRef={smallLogoRef}
+              on:updateImageRef={e => {
+                smallLogoRef = e.detail.ref
+              }}
+            />
+          </div>
+          <!-- MAIN COLOR -->
+          <div class="sub-section">
+            <label>Main color</label>
+            <input type="color" bind:value={about.mainColor} />
+          </div>
+          <!-- HIGHLIGHT COLOR -->
+          <div class="sub-section">
+            <label>Highlight color</label>
+            <input type="color" bind:value={about.highlightColor} />
+          </div>
+          <!-- PRE-LOGIN TEXT -->
+          <div class="sub-section">
+            <label>Pre-Login text</label>
+            <textarea bind:value={about.preLoginText} />
+          </div>
+          <!-- LANDING PAGE TEXT -->
+          <div class="sub-section">
+            <label>Landing page text</label>
+            <textarea bind:value={about.landingPageText} />
+          </div>
+          <!-- Show ETH address connection -->
+          <!-- <div class="sub-section">
+            <label>Show ETH address connection</label>
+            <input type="checkbox" />
+          </div> -->
+          <!-- LANDING PAGE TEXT -->
+          <!-- <div class="sub-section">
+            <label>ETH address text</label>
+            <textarea />
+          </div> -->
+          <!-- SAVE -->
+          <div class="sub-section">
+            <div class="btn" on:click={updateAbout}>Save</div>
+          </div>
+        </div>
       </div>
-    {/if}
-  </div>
+    </TabPanel>
 
-  <div class="section">
-    <div><strong>TODO:</strong> Edit general instance information</div>
-  </div>
+    <!-- CYCLES -->
+    <TabPanel>
+      <h2>Cycles</h2>
+      <div class="section">
+        <div class="btn" on:click={createCycle}>Create new cycle</div>
+        <div class="cycle-list">
+          {#each $cycles as cycle}
+            <div class="list-item">
+              <div class="title">{cycle.title}</div>
+              <div class="phase">
+                <strong>Phase:</strong>
+                {cycle.phase}
+              </div>
+              <div class="edit">Edit</div>
+              <div class="delete">Delete</div>
+            </div>
+          {/each}
+        </div>
+      </div>
+    </TabPanel>
 
-  <div class="section">
-    <div><strong>TODO:</strong> Add/Edit cycles</div>
-  </div>
+    <!-- USERS -->
+    <TabPanel>
+      <h2>Users</h2>
+      <div class="section">
+        <List list={$usersInCycle} />
+      </div>
+    </TabPanel>
 
-  <div class="section">
-    <div><strong>TODO:</strong> Edit proposals</div>
-  </div>
+    <!-- PROPOSALS -->
+    <TabPanel>
+      <h2>Proposals</h2>
+      <div class="section">
+        <List list={$proposalsInCycle} phase="proposal" />
+      </div>
+    </TabPanel>
+
+    <!-- VOTES -->
+    <TabPanel>
+      <h2>Votes</h2>
+      <div class="section">
+        {#each $proposalsInCycle as proposal}
+          <div class="list-item">
+            <div class="title">{proposal.title}</div>
+          </div>
+        {/each}
+      </div>
+    </TabPanel>
+
+    <!-- RESULTS -->
+    <TabPanel>
+      <h2>Results</h2>
+      <div class="section count-vote">
+        <div class="btn" on:click={countVote}>
+          Count Vote for <strong>{$currentCycle.title}</strong>
+        </div>
+        {#if currentResult && currentResult._updatedAt}
+          <div class="date">
+            <strong>Calculated on:</strong>
+            {dateTimeFormat(currentResult._updatedAt)}
+          </div>
+        {/if}
+      </div>
+    </TabPanel>
+  </Tabs>
 {:else}
   <Redirector />
 {/if}
@@ -51,14 +226,21 @@
 <style lang="scss">
   @import "../../variables.scss";
 
+  h2 {
+    border-bottom: 1px solid $foreground-color;
+    max-width: 700px;
+  }
+
   .section {
-    border-bottom: 1px solid black;
     padding-bottom: 20px;
-    padding-top: 20px;
+    width: 100%;
+    max-width: 700px;
   }
 
   .btn {
     padding: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
     border: 2px solid var(--main-color);
     display: inline-block;
     cursor: pointer;
@@ -72,5 +254,41 @@
   .date {
     font-size: $font-size-x-small;
     margin-top: 10px;
+  }
+
+  label {
+    display: block;
+    font-size: $font-size-small;
+    margin-bottom: 5px;
+  }
+
+  .sub-section {
+    margin-bottom: 20px;
+  }
+
+  textarea {
+    width: 100%;
+    height: 200px;
+    resize: none;
+    padding: 5px;
+  }
+
+  .cycle-list {
+    border-top: 1px solid $foreground-color-dimmed;
+    margin-top: 20px;
+  }
+
+  .list-item {
+    padding-top: 10px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid $foreground-color-dimmed;
+    display: flex;
+    justify-content: space-between;
+
+    .title,
+    .phase,
+    .edit {
+      margin-right: 10px;
+    }
   }
 </style>

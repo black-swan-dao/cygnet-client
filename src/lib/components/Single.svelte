@@ -99,7 +99,9 @@
       {/if}
       <!-- DESCRIPTION -->
       <div class="description">
-        {@html marked.parse(item.content, { renderer })}
+        {#if item.content}
+          {@html marked.parse(item.content, { renderer })}
+        {/if}
       </div>
       <!-- RESOURCES -->
       {#if item.resources && Array.isArray(item.resources) && item.resources.length > 0}

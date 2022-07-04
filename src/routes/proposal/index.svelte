@@ -94,6 +94,8 @@
         width: 100%;
         text-align: center;
         line-height: 25px;
+        padding-left: 10px;
+        padding-right: 10px;
       }
 
       .content {

@@ -6,17 +6,23 @@ import { currentCycle } from '$lib/cycles.js';
 import { CYGNET_ID } from "$lib/data.js";
 
 const DISCORD_PREFIX = "oauth2|discord|"
+const SLACK_PREFIX = "oauth2|slack|"
+export const CONNECTION_PREFIX = writable('')
+
 export let auth0 = null;
 export let isAuthenticated = false;
 export const profile = writable({})
 export const profileMeta = writable({})
 export const isAdmin = writable(false)
 
-export const configureAuthClient = async () => {
+export const configureAuthClient = async connection => {
+
+    CONNECTION_PREFIX.set(connection === 'slack' ? SLACK_PREFIX : DISCORD_PREFIX)
+
     auth0 = await createAuth0Client({
         domain: AUTH0_DOMAIN,
         client_id: AUTH0_CLIENT_ID,
-        connection: 'discord',
+        connection: connection, // connection: 'discord'
         audience: 'https://' + AUTH0_DOMAIN + '/api/v2/'
     })
     isAuthenticated = await auth0.isAuthenticated()
@@ -34,7 +40,7 @@ export const setProfile = async () => {
     try {
         sanityProfile = await loadData(
             "*[_type == 'user' && _id == $sub][0]",
-            { sub: get(profile).sub.replace(DISCORD_PREFIX, "") + '-' + CYGNET_ID }
+            { sub: get(profile).sub.replace(get(CONNECTION_PREFIX), "") + '-' + CYGNET_ID }
         )
         sanityProfile.roles.includes('cygnet-admin') ? isAdmin.set(true) : isAdmin.set(false)
     } catch (e) {

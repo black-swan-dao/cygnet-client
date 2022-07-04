@@ -3,6 +3,7 @@ import blocksToHtml from '@sanity/block-content-to-html'
 import imageUrlBuilder from '@sanity/image-url'
 import getVideoId from "get-video-id";
 import has from 'lodash/has.js'
+import { v4 as uuidv4 } from 'uuid'
 import { SANITY_ID, SANITY_TOKEN } from "$lib/cygnet-config.js"
 
 export const client = sanityClient({
@@ -43,6 +44,25 @@ export const toPlainText = (blocks = []) => {
             })
             .join('\n\n')
     )
+}
+
+export const fromPlainText = (text = "") => {
+    let content = []
+    content.push({
+        _type: "block",
+        _key: uuidv4(),
+        markDefs: [],
+        style: "normal",
+        children: [
+            {
+                _type: "span",
+                _key: uuidv4(),
+                marks: [],
+                text: text
+            }
+        ]
+    })
+    return content
 }
 
 const builder = imageUrlBuilder(client)

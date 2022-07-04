@@ -104,7 +104,13 @@
 {/if}
 
 {#if userSwitchActive}
-  <div class="user-switch" style={`min-width: ${userSwitchWidth}px;`}>
+  <div
+    class="user-switch"
+    style={`min-width: ${userSwitchWidth}px;`}
+    on:click={() => {
+      userSwitchActive = false
+    }}
+  >
     {#if $isAdmin}
       <a href="/admin" class="user-switch-item">Admin</a>
     {/if}

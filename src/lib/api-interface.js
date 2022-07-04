@@ -1,7 +1,7 @@
-import { getTokenSilently } from "$lib/authentication.js"
+import { getTokenSilently, CONNECTION_PREFIX } from "$lib/authentication.js"
+import { instance } from "$lib/data.js"
 import { voteMultiplier } from "$lib/authentication"
 import { get } from 'svelte/store'
-
 
 export const uploadImage = file => {
     return new Promise(async (resolve, reject) => {
@@ -35,7 +35,8 @@ export const saveProposal = messageBody => {
                 method: "POST",
                 body: JSON.stringify({
                     message: messageBody,
-                    authorization: token
+                    authorization: token,
+                    prefix: get(CONNECTION_PREFIX)
                 }),
                 redirect: "follow",
             }
@@ -57,7 +58,8 @@ export const submitProposal = async proposal => {
         // Prepare message body
         const rawBody = JSON.stringify({
             proposalId: proposal._id,
-            authorization: token
+            authorization: token,
+            prefix: get(CONNECTION_PREFIX)
         })
         // Set message options
         const requestOptions = {
@@ -80,7 +82,8 @@ export const unsubmitProposal = async proposal => {
         // Prepare message body
         const rawBody = JSON.stringify({
             proposalId: proposal._id,
-            authorization: token
+            authorization: token,
+            prefix: get(CONNECTION_PREFIX)
         })
         // Set message options
         const requestOptions = {
@@ -107,7 +110,8 @@ export const getVote = cycleId => {
             redirect: "follow",
             body: JSON.stringify({
                 cycleId: cycleId,
-                authorization: token
+                authorization: token,
+                prefix: get(CONNECTION_PREFIX)
             })
         }
         // Send message
@@ -136,7 +140,8 @@ export const setVote = async (cycleId, voteAllocation, voteMultiplier, voteMulti
                 voteAllocation: voteAllocation,
                 voteMultiplier: voteMultiplier,
                 voteMultiplierRole: voteMultiplierRole,
-                authorization: token
+                authorization: token,
+                prefix: get(CONNECTION_PREFIX)
             })
         }
         // Send message
@@ -156,7 +161,8 @@ export const submitVote = async (cycleId) => {
             redirect: "follow",
             body: JSON.stringify({
                 cycleId: cycleId,
-                authorization: token
+                authorization: token,
+                prefix: get(CONNECTION_PREFIX)
             })
         }
         // Send message
@@ -176,7 +182,8 @@ export const unsubmitVote = async (cycleId) => {
             redirect: "follow",
             body: JSON.stringify({
                 cycleId: cycleId,
-                authorization: token
+                authorization: token,
+                prefix: get(CONNECTION_PREFIX)
             })
         }
         // Send message
@@ -196,7 +203,8 @@ export const connectEthAddress = messageBody => {
                 method: "POST",
                 body: JSON.stringify({
                     message: messageBody,
-                    authorization: token
+                    authorization: token,
+                    prefix: get(CONNECTION_PREFIX)
                 }),
                 redirect: "follow",
             }
@@ -218,7 +226,8 @@ export const deleteProposal = async proposal => {
         // Prepare message body
         const rawBody = JSON.stringify({
             proposalId: proposal._id,
-            authorization: token
+            authorization: token,
+            prefix: get(CONNECTION_PREFIX)
         })
         // Set message options
         const requestOptions = {
@@ -235,6 +244,8 @@ export const deleteProposal = async proposal => {
     }
 }
 
+// ADMIN
+
 export const triggerCount = async cycleId => {
     try {
         // Get token
@@ -242,7 +253,8 @@ export const triggerCount = async cycleId => {
         // Prepare message body
         const rawBody = JSON.stringify({
             cycleId: cycleId,
-            authorization: token
+            authorization: token,
+            prefix: get(CONNECTION_PREFIX),
         })
         // Set message options
         const requestOptions = {
@@ -251,10 +263,44 @@ export const triggerCount = async cycleId => {
             redirect: "follow",
         }
         // Send message
-        const response = await fetch("/api/count-votes", requestOptions)
+        const response = await fetch("/api/admin/count-votes", requestOptions)
         const responseData = await response.json()
         console.log(responseData)
     } catch (e) {
         console.log(e.message)
     }
+}
+
+export const saveAbout = message => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Get token
+            const token = await getTokenSilently()
+            // Prepare message body
+            const rawBody = JSON.stringify({
+                instanceId: get(instance)._id,
+                message: message,
+                prefix: get(CONNECTION_PREFIX),
+                authorization: token
+            })
+            // Set message options
+            const requestOptions = {
+                method: "POST",
+                body: rawBody,
+                redirect: "follow",
+            }
+            // Send message
+            const response = await fetch("/api/admin/save-about", requestOptions)
+            const responseData = await response.json()
+            console.log(responseData)
+            resolve(responseData)
+        } catch (e) {
+            console.log(e.message)
+            reject(e.message)
+        }
+    })
+}
+
+export const saveCycle = async message => {
+    console.log('save cycle called')
 }

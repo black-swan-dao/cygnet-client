@@ -16,6 +16,7 @@
   import {
     cycles,
     getData,
+    instance,
     listenForPhaseChanges,
     listenForProposalChanges,
   } from "$lib/data.js"
@@ -41,7 +42,12 @@
   onMount(async () => {
     console.log("__ Starting app...")
     console.time("init")
-    await configureAuthClient()
+    await getData()
+    console.log("____ Data received")
+    console.log("$instance", $instance)
+    await configureAuthClient(
+      $instance.connection == "slack" ? "slack" : "discord"
+    )
     console.log("____ Auth client configured")
     const query = window.location.search
     if (query.includes("error=")) {
@@ -52,8 +58,6 @@
       await handleRedirectCallback()
     }
     if (isAuthenticated) setProfile()
-    await getData()
-    console.log("____ Data received")
     setThemeColors()
     setAvailableCycles($profileMeta, $cycles)
     console.log("____ Available cycles:", $availableCycles)

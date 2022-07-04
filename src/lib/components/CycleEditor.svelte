@@ -3,103 +3,83 @@
   import { profile } from "$lib/authentication.js"
   import { usersInCycle, resourcesInCycle } from "$lib/data.js"
   import { currentCycle } from "$lib/cycles"
-  import { saveProposal, uploadImage } from "$lib/api-interface.js"
+  import { saveCycle } from "$lib/api-interface.js"
   import LoadingIndicator from "./LoadingIndicator.svelte"
   import { compactDateTimeFormat } from "$lib/ui.js"
   import { goto } from "$app/navigation"
-  import ImageUpload from "$lib/components/ImageUpload.svelte"
 
-  export let proposal = {}
-  let title = ""
-  let content = ""
+  export let cycle = {}
+  let title = cycle.title ? cycle.title : ""
+  let discordRole = ""
+  let landingPageText = ""
+  let proposalPhaseText = ""
+  let votePhaseText = ""
+  let resultPhaseText = ""
+  // ... Phase select
+  let phaseItems = [
+    { value: "proposal", label: "Proposal" },
+    { value: "vote", label: "Vote" },
+    { value: "result", label: "Result" },
+  ]
+  let phaseValue = cycle.phase ? cycle.phase : null
+
+  let cycleStart = ""
+  let cycleMidpoint = ""
+  let cycleEnd = ""
+
+  //   let rankResultsByResource = false
+
   let processing = false
   let postId = false
-  let imageRef = ""
-  const validationErrors = {
-    title: false,
-    description: false,
-    image: false,
-  }
-  // ... Peers select
-  let peersItems = $usersInCycle
-    .filter(u => u.name !== $profile.name)
-    .map(u => {
-      return { value: u, label: u.name }
-    })
-  let peersValue = null
-  // ... Resources select
-  let resourcesItems = $resourcesInCycle.map(r => {
-    return { value: r, label: r.title }
-  })
-  let resourcesValue = null
 
-  const restoreEditor = () => {
-    title = proposal.title
-    content = proposal.content
-    if (proposal.authors && Array.isArray(proposal.authors)) {
-      peersValue = proposal.authors
-        .filter(a => a.name !== $profile.name)
-        .map(a => {
-          return { label: a.name, value: a }
-        })
-    }
-    if (proposal.resources && Array.isArray(proposal.resources)) {
-      resourcesValue = proposal.resources.map(a => {
-        return { label: a.title, value: a }
-      })
-    }
-    postId = proposal._id
-    imageRef = proposal.mainImage
-  }
-
-  const validate = () => {
-    let valid = true
-    if (!title) {
-      validationErrors.title = true
-      valid = false
-    } else {
-      validationErrors.title = false
-    }
-    if (!content) {
-      validationErrors.description = true
-      valid = false
-    } else {
-      validationErrors.description = false
-    }
-    if (!imageRef) {
-      validationErrors.image = true
-      valid = false
-    } else {
-      validationErrors.image = false
-    }
-    return valid
-  }
+  //   const validate = () => {
+  //     let valid = true
+  //     if (!title) {
+  //       validationErrors.title = true
+  //       valid = false
+  //     } else {
+  //       validationErrors.title = false
+  //     }
+  //     if (!content) {
+  //       validationErrors.description = true
+  //       valid = false
+  //     } else {
+  //       validationErrors.description = false
+  //     }
+  //     if (!image._id && !imageRef) {
+  //       validationErrors.image = true
+  //       valid = false
+  //     } else {
+  //       validationErrors.image = false
+  //     }
+  //     return valid
+  //   }
 
   const prepareToSave = async () => {
-    if (validate()) {
-      processing = true
-      const messageBody = {}
-      messageBody.title = title
-      messageBody.content = content
-      messageBody.peers = peersValue
-      messageBody.resources = resourcesValue
-      messageBody.imageId = imageRef.asset ? imageRef.asset._ref : null
-      messageBody.cycleId = $currentCycle._id
-      if (postId) {
-        messageBody.id = postId
-      }
-      const res = await saveProposal(messageBody)
-      proposal = res
-      processing = false
-      // Redirect to listing after saving
-      goto("/proposal")
-    }
+    console.log("prepare to save")
+    // if (validate()) {
+    // processing = true
+    // const messageBody = {}
+    // messageBody.title = title
+    // messageBody.content = content
+    // messageBody.peers = peersValue
+    // messageBody.resources = resourcesValue
+    // messageBody.imageId = imageRef.asset ? imageRef.asset._ref : image._id
+    // messageBody.cycleId = $currentCycle._id
+    // if (postId) {
+    //   messageBody.id = postId
+    // }
+    // const res = await saveCycle(messageBody)
+    // cycle = res
+    // processing = false
+    // Redirect to listing after saving
+    // }
   }
 
   // Restore editor state if we are editing an existing post
-  if (proposal.title) {
-    restoreEditor()
-  }
+  //   if (proposal.title) {
+  //     restoreEditor()
+  //   }
 </script>
 
 {#if processing}
@@ -112,69 +92,33 @@
     <input
       class="title"
       type="text"
-      placeholder="Title of your proposal"
+      placeholder="Title of cycle"
       bind:value={title}
     />
-    {#if validationErrors.title}
+    <!-- {#if validationErrors.title}
       <div class="validation-error">&#9888; Title required</div>
-    {/if}
-    <!-- MARKDOWN INFO -->
-    <div class="markdown-info">
-      * Use <a
-        href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet"
-        target="_blank">markdown</a
-      > to format text
-    </div>
+    {/if} -->
     <!-- DESCRIPTION -->
-    <textarea
+    <!-- <textarea
       class="description"
       placeholder="Write a short description for your proposal"
       bind:value={content}
     />
     {#if validationErrors.description}
       <div class="validation-error">&#9888; Description required</div>
-    {/if}
+    {/if} -->
     <!-- PEERS -->
     <div class="peer-container">
-      <Select
-        items={peersItems}
-        bind:value={peersValue}
-        placeholder="Add peers..."
-        isMulti={true}
-      />
+      <Select items={phaseItems} bind:value={phaseValue} placeholder="Phase." />
     </div>
-    <!-- RESOURCES -->
-    <div
-      class="resource-container"
-      class:visible={$resourcesInCycle.length > 0}
-    >
-      <Select
-        items={resourcesItems}
-        bind:value={resourcesValue}
-        placeholder="Add resources..."
-        isMulti={true}
-      />
-    </div>
-    <!-- IMAGE -->
-    <div class="upload-container">
-      <ImageUpload
-        {imageRef}
-        on:updateImageRef={e => {
-          imageRef = e.detail.ref
-        }}
-      />
-    </div>
-    {#if validationErrors.image}
-      <div class="validation-error">&#9888; Image required</div>
-    {/if}
     <div class="submission">
       <!-- SUBMIT -->
       <button class="submit" on:click={prepareToSave}>
-        {#if processing}Saving...{:else}Save proposal{/if}
+        {#if processing}Saving...{:else}Save cycle{/if}
       </button>
       <div class="last-updated">
-        Last saved: {proposal._updatedAt
-          ? compactDateTimeFormat(proposal._updatedAt)
+        Last saved: {cycle._updatedAt
+          ? compactDateTimeFormat(cycle._updatedAt)
           : "Never"}
       </div>
     </div>
@@ -266,6 +210,51 @@
     50% {
       opacity: 0;
     }
+  }
+
+  .custom-file-upload {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: $foreground-color;
+    padding: 40px;
+    margin-right: 20px;
+    box-sizing: border-box;
+    border: 1px dashed $foreground-color;
+    border-radius: 2px;
+    margin-bottom: 0;
+    cursor: pointer;
+    min-width: 180px;
+
+    &:hover {
+      background: var(--main-color-two);
+      color: $foreground-color;
+      border: 1px solid var(--main-color-two);
+    }
+
+    .text {
+      display: inline;
+    }
+
+    img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      display: none;
+      line-height: 0;
+    }
+
+    &.active {
+      .text {
+        display: none;
+      }
+      img {
+        display: inline-block;
+      }
+    }
+  }
+
+  input[type="file"] {
+    display: none;
   }
 
   .markdown-info {

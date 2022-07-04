@@ -1,4 +1,4 @@
-<div class="background"/>
+<div class="background" />
 
 <style lang="scss">
   @import "../../variables.scss";
@@ -12,5 +12,4 @@
     background: $background-color;
     z-index: 1;
   }
-
 </style>

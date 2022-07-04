@@ -2,7 +2,6 @@ import { authorizedClient } from '../_authorizedClient.js';
 import { loadData } from "$lib/sanity.js"
 import { nanoid } from 'nanoid';
 import { verifyToken } from '../_jwt.js'
-const DISCORD_PREFIX = "oauth2|discord|"
 
 export const post = async (event) => {
   const body = await event.request.json()
@@ -12,7 +11,7 @@ export const post = async (event) => {
       body: "error"
     }
   }
-  const userId = decodedToken.sub.replace(DISCORD_PREFIX, "")
+  const userId = decodedToken.sub.replace(body.prefix, "")
 
   const currentDoc = await loadData("*[_type == 'vote' && user._ref == $userId && cycle._ref == $cycleId][0]", { userId: userId + '-' + import.meta.env.VITE_CYGNET_ID, cycleId: body.cycleId })
   let res = currentDoc

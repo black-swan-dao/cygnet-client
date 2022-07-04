@@ -3,7 +3,7 @@ import { verifyToken } from '../_jwt.js'
 import { authorizedClient } from '../_authorizedClient.js';
 import { v4 as uuidv4 } from 'uuid'
 import uniqBy from 'lodash/uniqBy.js'
-const DISCORD_PREFIX = "oauth2|discord|"
+
 const slugify = str => str.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, "-")
 
 export const post = async (event) => {
@@ -13,7 +13,7 @@ export const post = async (event) => {
     console.log('body.authorization', body.authorization)
     const decodedToken = await verifyToken(body.authorization)
     // Get user ID from token
-    const userId = decodedToken.sub.replace(DISCORD_PREFIX, "")
+    const userId = decodedToken.sub.replace(body.prefix, "")
     // Get user from Sanity
     const user = await loadData("*[_type == 'user' && _id == $id][0]", { id: userId + '-' + import.meta.env.VITE_CYGNET_ID })
     console.log('user', user)
