@@ -1,36 +1,38 @@
 <script>
   import Select from "svelte-select"
   import { profile } from "$lib/authentication.js"
-  import { usersInCycle, resourcesInCycle } from "$lib/data.js"
-  import { currentCycle } from "$lib/cycles"
   import { saveCycle } from "$lib/api-interface.js"
   import LoadingIndicator from "./LoadingIndicator.svelte"
   import { compactDateTimeFormat } from "$lib/ui.js"
-  import { goto } from "$app/navigation"
+  import SveltyPicker from "svelty-picker"
+  import { toPlainText, fromPlainText } from "$lib/sanity.js"
+  import get from "lodash/get.js"
 
   export let cycle = {}
-  let title = cycle.title ? cycle.title : ""
-  let discordRole = ""
-  let landingPageText = ""
-  let proposalPhaseText = ""
-  let votePhaseText = ""
-  let resultPhaseText = ""
-  // ... Phase select
+
+  console.log("cycle", cycle)
+
+  let title = cycle.title || ""
+  let role = cycle.discordRole || ""
+  let textLanding = toPlainText(get(cycle, "textLanding.content"))
+  let textProposal = toPlainText(get(cycle, "textProposal.content"))
+  let textVote = toPlainText(get(cycle, "textVote.content"))
+  let textResult = toPlainText(get(cycle, "textResult.content"))
   let phaseItems = [
     { value: "proposal", label: "Proposal" },
     { value: "vote", label: "Vote" },
     { value: "result", label: "Result" },
   ]
-  let phaseValue = cycle.phase ? cycle.phase : null
+  let phase = cycle.phase || phaseItems[0]
 
-  let cycleStart = ""
-  let cycleMidpoint = ""
-  let cycleEnd = ""
+  let cycleStart = cycle.start || ""
+  let cycleMidpoint = cycle.midpoint || ""
+  let cycleEnd = cycle.end || ""
 
   //   let rankResultsByResource = false
+  // let useVotingWeights = false
 
   let processing = false
-  let postId = false
 
   //   const validate = () => {
   //     let valid = true
@@ -57,6 +59,7 @@
 
   const prepareToSave = async () => {
     console.log("prepare to save")
+    saveCycle()
     // if (validate()) {
     // processing = true
     // const messageBody = {}
@@ -75,11 +78,6 @@
     // Redirect to listing after saving
     // }
   }
-
-  // Restore editor state if we are editing an existing post
-  //   if (proposal.title) {
-  //     restoreEditor()
-  //   }
 </script>
 
 {#if processing}
@@ -88,31 +86,91 @@
 
 <div class="editor">
   <div class="proposal-form" class:processing>
-    <!-- TITLE -->
-    <input
-      class="title"
-      type="text"
-      placeholder="Title of cycle"
-      bind:value={title}
-    />
-    <!-- {#if validationErrors.title}
-      <div class="validation-error">&#9888; Title required</div>
-    {/if} -->
-    <!-- DESCRIPTION -->
-    <!-- <textarea
-      class="description"
-      placeholder="Write a short description for your proposal"
-      bind:value={content}
-    />
-    {#if validationErrors.description}
-      <div class="validation-error">&#9888; Description required</div>
-    {/if} -->
-    <!-- PEERS -->
-    <div class="peer-container">
-      <Select items={phaseItems} bind:value={phaseValue} placeholder="Phase." />
+    <div class="form-section">
+      <h3>Edit cycle</h3>
     </div>
+
+    <!-- TITLE -->
+    <div class="form-section">
+      <label>Title</label>
+      <input
+        class="title"
+        type="text"
+        placeholder="Title of cycle"
+        bind:value={title}
+      />
+    </div>
+
+    <!-- ROLE -->
+    <div class="form-section">
+      <label>Role</label>
+      <input class="role" type="text" bind:value={role} />
+    </div>
+
+    <!-- PHASE  -->
+    <div class="form-section">
+      <label>Phase</label>
+      <div class="peer-container">
+        <Select items={phaseItems} bind:value={phase} placeholder="phase" />
+      </div>
+    </div>
+
+    <!-- START DATE -->
+    <div class="form-section">
+      <label>Cycle start (Proposal phase starts)</label>
+      <SveltyPicker
+        inputClasses="form-control"
+        format="yyyy-mm-dd hh:ii"
+        bind:value={cycleStart}
+      />
+    </div>
+
+    <!-- MID DATE -->
+    <div class="form-section">
+      <label>Cycle midpoint (Proposal phase ends and vote phase starts)</label>
+      <SveltyPicker
+        inputClasses="form-control"
+        format="yyyy-mm-dd hh:ii"
+        bind:value={cycleMidpoint}
+      />
+    </div>
+
+    <!-- END DATE -->
+    <div class="form-section">
+      <label>Cycle end (Vote phase ends and result phase starts)</label>
+      <SveltyPicker
+        inputClasses="form-control"
+        format="yyyy-mm-dd hh:ii"
+        bind:value={cycleEnd}
+      />
+    </div>
+
+    <!-- TEXT (LANDING PAGE) -->
+    <div class="form-section">
+      <label>Text (landing page)</label>
+      <textarea class="text-landing-page" bind:value={textLanding} />
+    </div>
+
+    <!-- TEXT (PROPOSAL PHASE) -->
+    <div class="form-section">
+      <label>Text (proposal phase)</label>
+      <textarea class="text-proposal-phase" bind:value={textProposal} />
+    </div>
+
+    <!-- TEXT (VOTE PAGE) -->
+    <div class="form-section">
+      <label>Text (vote phase)</label>
+      <textarea class="text-vote-phase" bind:value={textVote} />
+    </div>
+
+    <!-- TEXT (RESULT PAGE) -->
+    <div class="form-section">
+      <label>Text (result phase)</label>
+      <textarea class="text-result-phase" bind:value={textResult} />
+    </div>
+
+    <!-- SUBMIT -->
     <div class="submission">
-      <!-- SUBMIT -->
       <button class="submit" on:click={prepareToSave}>
         {#if processing}Saving...{:else}Save cycle{/if}
       </button>
@@ -133,6 +191,16 @@
     margin-left: auto;
   }
 
+  .form-section {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-size: $font-size-small;
+    margin-bottom: 10px;
+  }
+
   .proposal-form {
     font-size: $font-size-normal;
     width: 100%;
@@ -144,18 +212,6 @@
       pointer-events: none;
       opacity: 0.5;
       filter: grayscale(1);
-    }
-  }
-
-  .description {
-    width: 100%;
-    min-height: 400px;
-    border: none;
-    outline: none;
-    color: $foreground-color;
-    background: rgba(255, 255, 255, 1);
-    &:focus {
-      background: rgba(255, 255, 255, 1);
     }
   }
 
@@ -181,103 +237,12 @@
     font-family: $secondary-font;
   }
 
-  .peer-container {
-    margin-bottom: 20px;
-    font-size: $font-size-small;
-    color: $foreground-color;
-  }
-
-  .resource-container {
-    margin-bottom: 20px;
-    font-size: $font-size-small;
-    color: $foreground-color;
-    display: none;
-
-    &.visible {
-      display: block;
-    }
-  }
-
-  .peer-container {
-    margin-top: 20px;
-  }
-
-  .upload-container {
-    font-size: $font-size-small;
-  }
-
-  @keyframes flash {
-    50% {
-      opacity: 0;
-    }
-  }
-
-  .custom-file-upload {
-    display: inline-block;
-    margin-bottom: 20px;
-    color: $foreground-color;
-    padding: 40px;
-    margin-right: 20px;
-    box-sizing: border-box;
-    border: 1px dashed $foreground-color;
-    border-radius: 2px;
-    margin-bottom: 0;
-    cursor: pointer;
-    min-width: 180px;
-
-    &:hover {
-      background: var(--main-color-two);
-      color: $foreground-color;
-      border: 1px solid var(--main-color-two);
-    }
-
-    .text {
-      display: inline;
-    }
-
-    img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      display: none;
-      line-height: 0;
-    }
-
-    &.active {
-      .text {
-        display: none;
-      }
-      img {
-        display: inline-block;
-      }
-    }
-  }
-
-  input[type="file"] {
-    display: none;
-  }
-
-  .markdown-info {
-    margin-top: 10px;
-    font-size: $font-size-x-small;
-    text-align: right;
-    padding: 10px;
-    font-family: $secondary-font;
-
-    a {
-      color: $foreground-color;
-      text-decoration: underline;
-
-      &:hover {
-        text-decoration: none;
-      }
-    }
-  }
-
   textarea {
     font-family: $secondary-font;
     padding: 10px;
     resize: none;
+    width: 100%;
+    height: 200px;
   }
 
   .validation-error {

@@ -3,6 +3,7 @@
   import { isAdmin } from "$lib/authentication.js"
   import { currentCycle, setAvailableCycles } from "$lib/cycles.js"
   import Redirector from "$lib/components/Redirector.svelte"
+  import CycleEditor from "$lib/components/CycleEditor.svelte"
   import ImageUpload from "$lib/components/ImageUpload.svelte"
   import List from "$lib/components/List.svelte"
   import LoadingIndicator from "$lib/components/LoadingIndicator.svelte"
@@ -22,6 +23,8 @@
   let bigLogoRef = $instance.bigLogo
   let smallLogoRef = $instance.smallLogo
 
+  let cycleToEdit = {}
+
   currentSection.set("admin")
 
   let currentResult = {}
@@ -39,6 +42,8 @@
   const countVote = () => {
     triggerCount($currentCycle._id)
   }
+
+  let showCycleEditor = false
 
   const createCycle = () => {
     console.log("create cycle")
@@ -157,22 +162,43 @@
     <!-- CYCLES -->
     <TabPanel>
       <h2>Cycles</h2>
-      <div class="section">
-        <div class="btn" on:click={createCycle}>Create new cycle</div>
-        <div class="cycle-list">
-          {#each $cycles as cycle}
-            <div class="list-item">
-              <div class="title">{cycle.title}</div>
-              <div class="phase">
-                <strong>Phase:</strong>
-                {cycle.phase}
-              </div>
-              <div class="edit">Edit</div>
-              <div class="delete">Delete</div>
-            </div>
-          {/each}
+      {#if showCycleEditor}
+        <div class="section">
+          <CycleEditor cycle={cycleToEdit} />
         </div>
-      </div>
+      {:else}
+        <div class="section">
+          <div
+            class="btn"
+            on:click={() => {
+              showCycleEditor = true
+            }}
+          >
+            Create new cycle
+          </div>
+          <div class="cycle-list">
+            {#each $cycles as cycle}
+              <div class="list-item">
+                <div class="title">{cycle.title}</div>
+                <div class="phase">
+                  <strong>Phase:</strong>
+                  {cycle.phase}
+                </div>
+                <div
+                  class="edit-cycle"
+                  on:click={() => {
+                    cycleToEdit = cycle
+                    showCycleEditor = true
+                  }}
+                >
+                  Edit
+                </div>
+                <div class="delete-cycle">Delete</div>
+              </div>
+            {/each}
+          </div>
+        </div>
+      {/if}
     </TabPanel>
 
     <!-- USERS -->
@@ -291,8 +317,12 @@
 
     .title,
     .phase,
-    .edit {
+    .edit-cycle {
       margin-right: 10px;
     }
+  }
+
+  .edit-cycle {
+    cursor: pointer;
   }
 </style>
