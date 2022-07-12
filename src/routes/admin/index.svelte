@@ -25,9 +25,9 @@
   currentSection.set("admin")
 
   let currentResult = {}
-  $: currentResult = $results.find(
-    result => result.cycle._id === $currentCycle._id
-  )
+  $: currentResult = $currentCycle
+    ? $results.find(result => result.cycle._id === $currentCycle._id)
+    : {}
 
   let about = {
     mainColor: $instance.mainColor,
@@ -179,7 +179,9 @@
     <TabPanel>
       <h2>Users</h2>
       <div class="section">
-        <List list={$usersInCycle} />
+        {#if $usersInCycle.length > 0}
+          <List list={$usersInCycle} />
+        {/if}
       </div>
     </TabPanel>
 
@@ -207,14 +209,16 @@
     <TabPanel>
       <h2>Results</h2>
       <div class="section count-vote">
-        <div class="btn" on:click={countVote}>
-          Count Vote for <strong>{$currentCycle.title}</strong>
-        </div>
-        {#if currentResult && currentResult._updatedAt}
-          <div class="date">
-            <strong>Calculated on:</strong>
-            {dateTimeFormat(currentResult._updatedAt)}
+        {#if $currentCycle}
+          <div class="btn" on:click={countVote}>
+            Count Vote for <strong>{$currentCycle.title}</strong>
           </div>
+          {#if currentResult && currentResult._updatedAt}
+            <div class="date">
+              <strong>Calculated on:</strong>
+              {dateTimeFormat(currentResult._updatedAt)}
+            </div>
+          {/if}
         {/if}
       </div>
     </TabPanel>

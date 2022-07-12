@@ -18,6 +18,7 @@ export const proposalsInCycle = derived(
     [proposals, currentCycle],
     ([$proposals, $currentCycle]) => {
         if ($proposals.length === 0) return []
+        if (!$currentCycle) return []
         return $proposals.filter(p => _.get(p, "cycle._id", "") === $currentCycle._id)
     }
 );
@@ -47,6 +48,7 @@ export const usersInCycle = derived(
     [users, currentCycle],
     ([$users, $currentCycle]) => {
         if ($users.length === 0) return []
+        if (!$currentCycle) return []
         if (!$currentCycle.discordRole || $currentCycle.discordRole === '') return $users
         return $users.filter(u => _.get(u, "roles", []).includes($currentCycle.discordRole))
     }
@@ -56,6 +58,7 @@ export const resourcesInCycle = derived(
     [resources, currentCycle],
     ([$resources, $currentCycle]) => {
         if ($resources.length === 0) return []
+        if (!$currentCycle) return []
         return $resources.filter(p => _.get(p, "cycle._id", "") === $currentCycle._id)
     }
 );
