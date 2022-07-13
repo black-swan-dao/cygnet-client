@@ -61,7 +61,8 @@
     return valid
   }
 
-  const createCycle = () => {
+  const createCycle = async () => {
+    processing = true
     if (validate) {
       let message = {}
       message.id = cycle._id || null
@@ -75,8 +76,9 @@
       message.cycleStart = cycleStart
       message.cycleMidpoint = cycleMidpoint
       message.cycleEnd = cycleEnd
-      saveCycle(message)
+      await saveCycle(message)
     }
+    processing = false
   }
 </script>
 

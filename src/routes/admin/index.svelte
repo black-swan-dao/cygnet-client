@@ -117,7 +117,9 @@
     <TabPanel>
       <h2>Proposals</h2>
       <div class="section">
-        <List list={$proposalsInCycle} phase="proposal" />
+        {#if $proposalsInCycle.length > 0}
+          <List list={$proposalsInCycle} phase="proposal" />
+        {/if}
       </div>
     </TabPanel>
 
