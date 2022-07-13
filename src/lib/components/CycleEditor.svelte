@@ -1,16 +1,15 @@
 <script>
   import Select from "svelte-select"
-  import { profile } from "$lib/authentication.js"
   import { saveCycle } from "$lib/api-interface.js"
   import LoadingIndicator from "./LoadingIndicator.svelte"
   import { compactDateTimeFormat } from "$lib/ui.js"
   import SveltyPicker from "svelty-picker"
   import { toPlainText, fromPlainText } from "$lib/sanity.js"
   import get from "lodash/get.js"
+  import { createEventDispatcher } from "svelte"
+  const dispatch = createEventDispatcher()
 
   export let cycle = {}
-
-  console.log("cycle", cycle)
 
   let title = cycle.title || ""
   let role = cycle.discordRole || ""
@@ -29,54 +28,55 @@
   let cycleMidpoint = cycle.midpoint || ""
   let cycleEnd = cycle.end || ""
 
-  //   let rankResultsByResource = false
+  // let rankResultsByResource = false
   // let useVotingWeights = false
 
   let processing = false
 
-  //   const validate = () => {
-  //     let valid = true
-  //     if (!title) {
-  //       validationErrors.title = true
-  //       valid = false
-  //     } else {
-  //       validationErrors.title = false
-  //     }
-  //     if (!content) {
-  //       validationErrors.description = true
-  //       valid = false
-  //     } else {
-  //       validationErrors.description = false
-  //     }
-  //     if (!image._id && !imageRef) {
-  //       validationErrors.image = true
-  //       valid = false
-  //     } else {
-  //       validationErrors.image = false
-  //     }
-  //     return valid
-  //   }
+  const closeEditor = () => {
+    dispatch("close")
+  }
 
-  const prepareToSave = async () => {
-    console.log("prepare to save")
-    saveCycle()
-    // if (validate()) {
-    // processing = true
-    // const messageBody = {}
-    // messageBody.title = title
-    // messageBody.content = content
-    // messageBody.peers = peersValue
-    // messageBody.resources = resourcesValue
-    // messageBody.imageId = imageRef.asset ? imageRef.asset._ref : image._id
-    // messageBody.cycleId = $currentCycle._id
-    // if (postId) {
-    //   messageBody.id = postId
-    // }
-    // const res = await saveCycle(messageBody)
-    // cycle = res
-    // processing = false
-    // Redirect to listing after saving
-    // }
+  const validate = () => {
+    let valid = true
+    return valid
+    if (!title) {
+      validationErrors.title = true
+      valid = false
+    } else {
+      validationErrors.title = false
+    }
+    if (!content) {
+      validationErrors.description = true
+      valid = false
+    } else {
+      validationErrors.description = false
+    }
+    if (!image._id && !imageRef) {
+      validationErrors.image = true
+      valid = false
+    } else {
+      validationErrors.image = false
+    }
+    return valid
+  }
+
+  const createCycle = () => {
+    if (validate) {
+      let message = {}
+      message.id = cycle._id || null
+      message.title = title
+      message.role = role
+      message.textLanding = fromPlainText(textLanding)
+      message.textProposal = fromPlainText(textProposal)
+      message.textVote = fromPlainText(textVote)
+      message.textResult = fromPlainText(textResult)
+      message.phase = phase.value
+      message.cycleStart = cycleStart
+      message.cycleMidpoint = cycleMidpoint
+      message.cycleEnd = cycleEnd
+      saveCycle(message)
+    }
   }
 </script>
 
@@ -86,8 +86,9 @@
 
 <div class="editor">
   <div class="proposal-form" class:processing>
-    <div class="form-section">
-      <h3>Edit cycle</h3>
+    <div class="form-section header">
+      <div><strong>Edit cycle</strong></div>
+      <div class="close" on:click={closeEditor}>Close</div>
     </div>
 
     <!-- TITLE -->
@@ -171,7 +172,7 @@
 
     <!-- SUBMIT -->
     <div class="submission">
-      <button class="submit" on:click={prepareToSave}>
+      <button class="submit" on:click={createCycle}>
         {#if processing}Saving...{:else}Save cycle{/if}
       </button>
       <div class="last-updated">
@@ -193,6 +194,22 @@
 
   .form-section {
     margin-bottom: 20px;
+
+    &.header {
+      display: flex;
+      justify-content: space-between;
+
+      .close {
+        cursor: pointer;
+        font-size: $font-size-x-small;
+        padding: 5px;
+        border: 1px solid var(--main-color);
+
+        &:hover {
+          background: var(--main-color);
+        }
+      }
+    }
   }
 
   label {
@@ -215,13 +232,13 @@
     }
   }
 
-  .title {
+  input[type="text"] {
     color: $foreground-color;
     padding: 10px;
     border: none;
     outline: none;
-
     background: rgba(255, 255, 255, 1);
+
     &:focus {
       background: rgba(255, 255, 255, 1);
     }

@@ -245,30 +245,32 @@ export const deleteProposal = async proposal => {
 }
 
 // ADMIN
-
 export const triggerCount = async cycleId => {
-    try {
-        // Get token
-        const token = await getTokenSilently()
-        // Prepare message body
-        const rawBody = JSON.stringify({
-            cycleId: cycleId,
-            authorization: token,
-            prefix: get(CONNECTION_PREFIX),
-        })
-        // Set message options
-        const requestOptions = {
-            method: "POST",
-            body: rawBody,
-            redirect: "follow",
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Get token
+            const token = await getTokenSilently()
+            // Prepare message body
+            const rawBody = JSON.stringify({
+                cycleId: cycleId,
+                authorization: token,
+                prefix: get(CONNECTION_PREFIX),
+            })
+            // Set message options
+            const requestOptions = {
+                method: "POST",
+                body: rawBody,
+                redirect: "follow",
+            }
+            // Send message
+            const response = await fetch("/api/admin/count-votes", requestOptions)
+            const responseData = await response.json()
+            resolve(responseData)
+        } catch (e) {
+            console.log(e.message)
+            reject(e.message)
         }
-        // Send message
-        const response = await fetch("/api/admin/count-votes", requestOptions)
-        const responseData = await response.json()
-        console.log(responseData)
-    } catch (e) {
-        console.log(e.message)
-    }
+    })
 }
 
 export const saveAbout = message => {
@@ -292,7 +294,6 @@ export const saveAbout = message => {
             // Send message
             const response = await fetch("/api/admin/save-about", requestOptions)
             const responseData = await response.json()
-            console.log(responseData)
             resolve(responseData)
         } catch (e) {
             console.log(e.message)
@@ -302,5 +303,55 @@ export const saveAbout = message => {
 }
 
 export const saveCycle = async message => {
-    console.log('save cycle called')
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Get token
+            const token = await getTokenSilently()
+            // Prepare message body
+            const rawBody = JSON.stringify({
+                instanceId: get(instance)._id,
+                message: message,
+                prefix: get(CONNECTION_PREFIX),
+                authorization: token
+            })
+            // Set message options
+            const requestOptions = {
+                method: "POST",
+                body: rawBody,
+                redirect: "follow",
+            }
+            // Send message
+            const response = await fetch("/api/admin/save-cycle", requestOptions)
+            const responseData = await response.json()
+            resolve(responseData)
+        } catch (e) {
+            console.log(e.message)
+            reject(e.message)
+        }
+    })
+}
+
+export const deleteCycle = async cycle => {
+    try {
+        // Get token
+        const token = await getTokenSilently()
+        // Prepare message body
+        const rawBody = JSON.stringify({
+            cycleId: cycle._id,
+            authorization: token,
+            prefix: get(CONNECTION_PREFIX)
+        })
+        // Set message options
+        const requestOptions = {
+            method: "POST",
+            body: rawBody,
+            redirect: "follow",
+        }
+        // Send message
+        const response = await fetch("/api/admin/delete-cycle", requestOptions)
+        const responseData = await response.json()
+        console.log(responseData)
+    } catch (e) {
+        console.log(e.message)
+    }
 }

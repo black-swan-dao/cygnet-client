@@ -35,8 +35,6 @@ export const post = async (event) => {
             totalEffectiveVotes: 0,
             numberOfParticipants: 0,
         }
-        // Get all resources for this cycle
-        const resources = await loadData("*[_type == 'resource' && cycle._ref == $cycleId]", { cycleId: cycleId })
         // Get all vote documents for this cycle
         const votes = await loadData("*[_type == 'vote' && cycle._ref == $cycleId && submitted == true]", { cycleId: cycleId })
         // ====>
@@ -72,12 +70,10 @@ export const post = async (event) => {
         // ====>
         // TODO: COUNT PER RESOURCE
         // ====>
-        authorizedClient.createOrReplace(resultObject).then((res) => {
-            console.log(`Result was created, document ID is ${res._id}`)
-        })
+        const newVotePost = await authorizedClient.createOrReplace(resultObject)
 
         return {
-            body: JSON.stringify(resultObject),
+            body: JSON.stringify(newVotePost),
         };
     }
     return {

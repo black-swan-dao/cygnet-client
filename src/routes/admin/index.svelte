@@ -1,82 +1,34 @@
 <script>
-  import { toPlainText, fromPlainText } from "$lib/sanity.js"
   import { isAdmin } from "$lib/authentication.js"
-  import { currentCycle, setAvailableCycles } from "$lib/cycles.js"
+  import { currentCycle } from "$lib/cycles.js"
   import Redirector from "$lib/components/Redirector.svelte"
   import CycleEditor from "$lib/components/CycleEditor.svelte"
-  import ImageUpload from "$lib/components/ImageUpload.svelte"
+  import AboutEditor from "$lib/components/AboutEditor.svelte"
   import List from "$lib/components/List.svelte"
-  import LoadingIndicator from "$lib/components/LoadingIndicator.svelte"
-  import { triggerCount, saveAbout } from "$lib/api-interface.js"
+  import { triggerCount } from "$lib/api-interface.js"
   import { currentSection, dateTimeFormat } from "$lib/ui.js"
-  import {
-    results,
-    instance,
-    proposalsInCycle,
-    usersInCycle,
-    cycles,
-  } from "$lib/data.js"
+  import { results, proposalsInCycle, usersInCycle, cycles } from "$lib/data.js"
   import { Tabs, TabList, TabPanel, Tab } from "$lib/components/tabs/tabs.js"
-  import get from "lodash/get.js"
-
-  let processing = false
-  let bigLogoRef = $instance.bigLogo
-  let smallLogoRef = $instance.smallLogo
-
-  let cycleToEdit = {}
+  import CycleDeleteButton from "$lib/components/CycleDeleteButton.svelte"
+  import LoadingIndicator from "$lib/components/LoadingIndicator.svelte"
 
   currentSection.set("admin")
+
+  let showCycleEditor = false
+  let cycleToEdit = {}
+
+  let processing = false
 
   let currentResult = {}
   $: currentResult = $currentCycle
     ? $results.find(result => result.cycle._id === $currentCycle._id)
     : {}
 
-  let about = {
-    mainColor: $instance.mainColor,
-    highlightColor: $instance.highlightColor,
-    preLoginText: toPlainText(get($instance, "preLoginText.content")),
-    landingPageText: toPlainText(get($instance, "landingPageText.content")),
-  }
-
-  const countVote = () => {
-    triggerCount($currentCycle._id)
-  }
-
-  let showCycleEditor = false
-
-  const createCycle = () => {
-    console.log("create cycle")
-    // saveCycle()
-  }
-
-  const deleteCycle = () => {
-    console.log("create cycle")
-    // deleteCycle()
-  }
-
-  const updateAbout = async () => {
+  const countVote = async () => {
     processing = true
-    console.log("Save about")
-    console.log(about)
-    console.log("bigLogoRef", bigLogoRef)
-    console.log("smallLogoRef", smallLogoRef)
-    const message = {
-      mainColor: about.mainColor,
-      highlightColor: about.highlightColor,
-      bigLogo: bigLogoRef,
-      smallLogo: smallLogoRef,
-      preLoginText: {
-        _type: "simpleEditor",
-        content: fromPlainText(about.preLoginText),
-      },
-      landingPageText: {
-        _type: "simpleEditor",
-        content: fromPlainText(about.landingPageText),
-      },
-    }
-    console.log(message)
-    await saveAbout(message)
+    const newResult = await triggerCount($currentCycle._id)
+    console.log(newResult)
+    currentResult = newResult
     processing = false
   }
 </script>
@@ -92,7 +44,7 @@
       <Tab>Cycles</Tab>
       <Tab>Users</Tab>
       <Tab>Proposals</Tab>
-      <Tab>Votes</Tab>
+      <!-- <Tab>Votes</Tab> -->
       <Tab>Results</Tab>
     </TabList>
 
@@ -100,62 +52,7 @@
     <TabPanel>
       <h2>About</h2>
       <div class="section">
-        <div>
-          <!-- BIG LOGO -->
-          <div class="sub-section">
-            <label>Big logo</label>
-            <ImageUpload
-              imageRef={bigLogoRef}
-              on:updateImageRef={e => {
-                bigLogoRef = e.detail.ref
-              }}
-            />
-          </div>
-          <!-- SMALL LOGO -->
-          <div class="sub-section">
-            <label>Small logo</label>
-            <ImageUpload
-              imageRef={smallLogoRef}
-              on:updateImageRef={e => {
-                smallLogoRef = e.detail.ref
-              }}
-            />
-          </div>
-          <!-- MAIN COLOR -->
-          <div class="sub-section">
-            <label>Main color</label>
-            <input type="color" bind:value={about.mainColor} />
-          </div>
-          <!-- HIGHLIGHT COLOR -->
-          <div class="sub-section">
-            <label>Highlight color</label>
-            <input type="color" bind:value={about.highlightColor} />
-          </div>
-          <!-- PRE-LOGIN TEXT -->
-          <div class="sub-section">
-            <label>Pre-Login text</label>
-            <textarea bind:value={about.preLoginText} />
-          </div>
-          <!-- LANDING PAGE TEXT -->
-          <div class="sub-section">
-            <label>Landing page text</label>
-            <textarea bind:value={about.landingPageText} />
-          </div>
-          <!-- Show ETH address connection -->
-          <!-- <div class="sub-section">
-            <label>Show ETH address connection</label>
-            <input type="checkbox" />
-          </div> -->
-          <!-- LANDING PAGE TEXT -->
-          <!-- <div class="sub-section">
-            <label>ETH address text</label>
-            <textarea />
-          </div> -->
-          <!-- SAVE -->
-          <div class="sub-section">
-            <div class="btn" on:click={updateAbout}>Save</div>
-          </div>
-        </div>
+        <AboutEditor />
       </div>
     </TabPanel>
 
@@ -164,7 +61,13 @@
       <h2>Cycles</h2>
       {#if showCycleEditor}
         <div class="section">
-          <CycleEditor cycle={cycleToEdit} />
+          <CycleEditor
+            cycle={cycleToEdit}
+            on:close={() => {
+              showCycleEditor = false
+              cycleToEdit = {}
+            }}
+          />
         </div>
       {:else}
         <div class="section">
@@ -178,22 +81,21 @@
           </div>
           <div class="cycle-list">
             {#each $cycles as cycle}
-              <div class="list-item">
-                <div class="title">{cycle.title}</div>
-                <div class="phase">
-                  <strong>Phase:</strong>
-                  {cycle.phase}
-                </div>
+              <div class="cycle-list-item">
                 <div
-                  class="edit-cycle"
+                  class="info"
                   on:click={() => {
                     cycleToEdit = cycle
                     showCycleEditor = true
                   }}
                 >
-                  Edit
+                  <div class="title">{cycle.title}</div>
+                  <div class="phase">
+                    <strong>Phase:</strong>
+                    {cycle.phase}
+                  </div>
                 </div>
-                <div class="delete-cycle">Delete</div>
+                <CycleDeleteButton {cycle} />
               </div>
             {/each}
           </div>
@@ -220,7 +122,7 @@
     </TabPanel>
 
     <!-- VOTES -->
-    <TabPanel>
+    <!-- <TabPanel>
       <h2>Votes</h2>
       <div class="section">
         {#each $proposalsInCycle as proposal}
@@ -229,7 +131,7 @@
           </div>
         {/each}
       </div>
-    </TabPanel>
+    </TabPanel> -->
 
     <!-- RESULTS -->
     <TabPanel>
@@ -304,25 +206,32 @@
   }
 
   .cycle-list {
-    border-top: 1px solid $foreground-color-dimmed;
     margin-top: 20px;
   }
 
-  .list-item {
-    padding-top: 10px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid $foreground-color-dimmed;
+  .cycle-list-item {
+    height: 80px;
+    border: 2px solid var(--main-color);
     display: flex;
     justify-content: space-between;
+    align-items: center;
 
-    .title,
-    .phase,
-    .edit-cycle {
-      margin-right: 10px;
+    .info {
+      padding-left: 10px;
+      padding-right: 10px;
+      display: flex;
+      align-items: center;
+      height: 100%;
+      width: 100%;
+
+      div {
+        margin-right: 20px;
+      }
+
+      &:hover {
+        cursor: pointer;
+        background: var(--main-color-three);
+      }
     }
-  }
-
-  .edit-cycle {
-    cursor: pointer;
   }
 </style>
