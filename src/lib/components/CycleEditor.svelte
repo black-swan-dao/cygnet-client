@@ -28,6 +28,8 @@
   let cycleMidpoint = cycle.midpoint || ""
   let cycleEnd = cycle.end || ""
 
+  let lastSavedAt = cycle._updatedAt
+
   // let rankResultsByResource = false
   // let useVotingWeights = false
 
@@ -76,7 +78,8 @@
       message.cycleStart = cycleStart
       message.cycleMidpoint = cycleMidpoint
       message.cycleEnd = cycleEnd
-      await saveCycle(message)
+      let updatedCycle = await saveCycle(message)
+      lastSavedAt = updatedCycle._updatedAt
     }
     processing = false
   }
@@ -178,9 +181,7 @@
         {#if processing}Saving...{:else}Save cycle{/if}
       </button>
       <div class="last-updated">
-        Last saved: {cycle._updatedAt
-          ? compactDateTimeFormat(cycle._updatedAt)
-          : "Never"}
+        Last saved: {lastSavedAt ? compactDateTimeFormat(lastSavedAt) : "Never"}
       </div>
     </div>
   </div>
