@@ -35,19 +35,22 @@ export const handleRedirectCallback = async () => {
 }
 
 export const setProfile = async () => {
-    profile.set(await auth0.getUser())
-    let sanityProfile = {}
-    try {
-        sanityProfile = await loadData(
-            "*[_type == 'user' && _id == $sub][0]",
-            { sub: get(profile).sub.replace(get(CONNECTION_PREFIX), "") + '-' + CYGNET_ID }
-        )
-        sanityProfile.roles.includes('cygnet-admin') ? isAdmin.set(true) : isAdmin.set(false)
-    } catch (e) {
-        console.log('Error loading profile from Sanity:', e);
-        return
-    }
-    profileMeta.set(sanityProfile)
+    return new Promise(async (resolve, reject) => {
+        profile.set(await auth0.getUser())
+        let sanityProfile = {}
+        try {
+            sanityProfile = await loadData(
+                "*[_type == 'user' && _id == $sub][0]",
+                { sub: get(profile).sub.replace(get(CONNECTION_PREFIX), "") + '-' + CYGNET_ID }
+            )
+            sanityProfile.roles.includes('cygnet-admin') ? isAdmin.set(true) : isAdmin.set(false)
+        } catch (e) {
+            console.log('Error loading profile from Sanity:', e);
+            reject(e.message)
+        }
+        profileMeta.set(sanityProfile)
+        resolve()
+    })
 }
 
 export const voteMultiplier = derived(

@@ -57,7 +57,7 @@
     if (query.includes("code=") && query.includes("state=")) {
       await handleRedirectCallback()
     }
-    if (isAuthenticated) setProfile()
+    if (isAuthenticated) await setProfile()
     setThemeColors()
     setAvailableCycles($profileMeta, $cycles)
     console.log("____ Available cycles:", $availableCycles)

@@ -162,13 +162,13 @@
 
   h2 {
     border-bottom: 1px solid $foreground-color;
-    max-width: 700px;
+    max-width: 900px;
   }
 
   .section {
     padding-bottom: 20px;
     width: 100%;
-    max-width: 700px;
+    max-width: 900px;
   }
 
   .btn {
@@ -214,9 +214,14 @@
   .cycle-list-item {
     height: 80px;
     border: 2px solid var(--main-color);
+    border-bottom: unset;
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    &:last-child {
+      border-bottom: 2px solid var(--main-color);
+    }
 
     .info {
       padding-left: 10px;
