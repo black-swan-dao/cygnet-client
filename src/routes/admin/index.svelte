@@ -3,11 +3,18 @@
   import { currentCycle } from "$lib/cycles.js"
   import Redirector from "$lib/components/Redirector.svelte"
   import CycleEditor from "$lib/components/CycleEditor.svelte"
+  import ResourceEditor from "$lib/components/ResourceEditor.svelte"
   import AboutEditor from "$lib/components/AboutEditor.svelte"
   import List from "$lib/components/List.svelte"
   import { triggerCount } from "$lib/api-interface.js"
   import { currentSection, dateTimeFormat } from "$lib/ui.js"
-  import { results, proposalsInCycle, usersInCycle, cycles } from "$lib/data.js"
+  import {
+    results,
+    proposalsInCycle,
+    usersInCycle,
+    cycles,
+    resourcesInCycle,
+  } from "$lib/data.js"
   import { Tabs, TabList, TabPanel, Tab } from "$lib/components/tabs/tabs.js"
   import CycleDeleteButton from "$lib/components/CycleDeleteButton.svelte"
   import LoadingIndicator from "$lib/components/LoadingIndicator.svelte"
@@ -16,6 +23,9 @@
 
   let showCycleEditor = false
   let cycleToEdit = {}
+
+  let showResourceEditor = false
+  let resourceToEdit = {}
 
   let processing = false
 
@@ -43,8 +53,9 @@
       <Tab>About</Tab>
       <Tab>Cycles</Tab>
       <Tab>Users</Tab>
+      <Tab>Resources</Tab>
       <Tab>Proposals</Tab>
-      <!-- <Tab>Votes</Tab> -->
+      <Tab>Votes</Tab>
       <Tab>Results</Tab>
     </TabList>
 
@@ -113,6 +124,40 @@
       </div>
     </TabPanel>
 
+    <!-- RESOURCES-->
+    <TabPanel>
+      <h2>Resources</h2>
+      {#if showResourceEditor}
+        <div class="section">
+          <ResourceEditor
+            resource={resourceToEdit}
+            on:close={() => {
+              showResourceEditor = false
+              resourceToEdit = {}
+            }}
+          />
+        </div>
+      {:else}
+        <div class="section">
+          <div
+            class="btn"
+            on:click={() => {
+              showResourceEditor = true
+            }}
+          >
+            Create new resource
+          </div>
+          <div class="section">
+            {#each $resourcesInCycle as resource}
+              <div class="list-item">
+                <div class="title">{resource.title}</div>
+              </div>
+            {/each}
+          </div>
+        </div>
+      {/if}
+    </TabPanel>
+
     <!-- PROPOSALS -->
     <TabPanel>
       <h2>Proposals</h2>
@@ -124,16 +169,17 @@
     </TabPanel>
 
     <!-- VOTES -->
-    <!-- <TabPanel>
+    <TabPanel>
       <h2>Votes</h2>
       <div class="section">
-        {#each $proposalsInCycle as proposal}
+        TODO
+        <!-- {#each $proposalsInCycle as proposal}
           <div class="list-item">
             <div class="title">{proposal.title}</div>
           </div>
-        {/each}
+        {/each} -->
       </div>
-    </TabPanel> -->
+    </TabPanel>
 
     <!-- RESULTS -->
     <TabPanel>

@@ -355,3 +355,57 @@ export const deleteCycle = async cycle => {
         console.log(e.message)
     }
 }
+
+export const saveResource = async message => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            // Get token
+            const token = await getTokenSilently()
+            // Prepare message body
+            const rawBody = JSON.stringify({
+                instanceId: get(instance)._id,
+                message: message,
+                prefix: get(CONNECTION_PREFIX),
+                authorization: token
+            })
+            // Set message options
+            const requestOptions = {
+                method: "POST",
+                body: rawBody,
+                redirect: "follow",
+            }
+            // Send message
+            const response = await fetch("/api/admin/save-resource", requestOptions)
+            const responseData = await response.json()
+            resolve(responseData)
+        } catch (e) {
+            console.log(e.message)
+            reject(e.message)
+        }
+    })
+}
+
+export const deleteResource = async resource => {
+    try {
+        // Get token
+        const token = await getTokenSilently()
+        // Prepare message body
+        const rawBody = JSON.stringify({
+            resourceId: resource._id,
+            authorization: token,
+            prefix: get(CONNECTION_PREFIX)
+        })
+        // Set message options
+        const requestOptions = {
+            method: "POST",
+            body: rawBody,
+            redirect: "follow",
+        }
+        // Send message
+        const response = await fetch("/api/admin/delete-resource", requestOptions)
+        const responseData = await response.json()
+        console.log(responseData)
+    } catch (e) {
+        console.log(e.message)
+    }
+}
