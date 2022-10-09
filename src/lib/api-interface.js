@@ -14,7 +14,7 @@ export const uploadImage = file => {
             body: formData,
             redirect: "follow",
         }
-        const response = await fetch("https://graphics.eyebeam.dev", requestOptions)
+        const response = await fetch("https://img.cygnet-service.com", requestOptions)
         // const response = await fetch("/api/upload-image", requestOptions)
         if (response.ok) {
             const responseData = await response.json()
