@@ -2,9 +2,9 @@ import { loadData } from "$lib/sanity.js"
 import { verifyToken } from '../../_jwt.js'
 import { authorizedClient } from '../../_authorizedClient.js';
 
-export const post = async (event) => {
+export async function POST({ request }) {
     // Parse message body
-    const body = await event.request.json()
+    const body = await request.json()
     // Verify and decode JWT
     const decodedToken = await verifyToken(body.authorization)
     // Get user ID from token

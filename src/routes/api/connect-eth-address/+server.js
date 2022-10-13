@@ -1,8 +1,8 @@
 import { verifyToken } from '../_jwt.js'
 import { authorizedClient } from '../_authorizedClient.js';
 
-export const post = async (event) => {
-    const body = await event.request.json()
+export async function POST({ request }) {
+    const body = await request.json()
     const decodedToken = await verifyToken(body.authorization)
     const userId = decodedToken.sub.replace(body.prefix, "")
     const res = await authorizedClient

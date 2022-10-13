@@ -7,6 +7,7 @@
   import { toPlainText, fromPlainText } from "$lib/sanity.js"
   import get from "lodash/get.js"
   import { createEventDispatcher } from "svelte"
+  import { format } from "date-fns"
   const dispatch = createEventDispatcher()
 
   export let cycle = {}
@@ -24,9 +25,22 @@
   ]
   let phase = cycle.phase || phaseItems[0]
 
-  let cycleStart = cycle.start || ""
-  let cycleMidpoint = cycle.midpoint || ""
-  let cycleEnd = cycle.end || ""
+  const toSimpleDateFormat = d => {
+    // yyyy-mm-ddThh:mm:ss.000Z => yyyy-mm-dd hh:mm
+    let dateParts = d.split("T")
+    let timeParts = dateParts[1].split(".")
+    return dateParts[0] + " " + timeParts[0]
+  }
+
+  const fromSimpleDateFormat = d => {
+    // yyyy-mm-dd hh:mm => yyyy-mm-ddThh:mm:ss.000Z
+    let dateParts = d.split(" ")
+    return dateParts[0] + "T" + dateParts[1] + ".000Z"
+  }
+
+  let cycleStart = cycle.start ? toSimpleDateFormat(cycle.start) : ""
+  let cycleMidpoint = cycle.midpoint ? toSimpleDateFormat(cycle.midpoint) : ""
+  let cycleEnd = cycle.end ? toSimpleDateFormat(cycle.end) : ""
 
   let lastSavedAt = cycle._updatedAt
 
@@ -37,6 +51,10 @@
 
   const closeEditor = () => {
     dispatch("close")
+  }
+
+  $: {
+    console.log(cycle)
   }
 
   const validate = () => {
@@ -64,6 +82,14 @@
   }
 
   const createCycle = async () => {
+    console.log("cycleStart", cycleStart, fromSimpleDateFormat(cycleStart))
+    console.log(
+      "cycleMidpoint",
+      cycleMidpoint,
+      fromSimpleDateFormat(cycleMidpoint)
+    )
+    console.log("cycleEnd", cycleEnd, fromSimpleDateFormat(cycleEnd))
+
     processing = true
     if (validate) {
       let message = {}
@@ -75,9 +101,9 @@
       message.textVote = fromPlainText(textVote)
       message.textResult = fromPlainText(textResult)
       message.phase = phase.value
-      message.cycleStart = cycleStart
-      message.cycleMidpoint = cycleMidpoint
-      message.cycleEnd = cycleEnd
+      message.cycleStart = fromSimpleDateFormat(cycleStart)
+      message.cycleMidpoint = fromSimpleDateFormat(cycleMidpoint)
+      message.cycleEnd = fromSimpleDateFormat(cycleEnd)
       let updatedCycle = await saveCycle(message)
       lastSavedAt = updatedCycle._updatedAt
     }

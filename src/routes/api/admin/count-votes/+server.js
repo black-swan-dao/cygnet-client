@@ -13,8 +13,8 @@ export const authorizedClient = sanityClient({
     useCdn: false // `false` if you want to ensure fresh data
 })
 
-export const post = async (event) => {
-    const body = await event.request.json()
+export async function POST({ request }) {
+    const body = await request.json()
     const cycleId = body.cycleId
     if (cycleId) {
         // Prepare inital result document
@@ -76,6 +76,7 @@ export const post = async (event) => {
             body: JSON.stringify(newVotePost),
         };
     }
+
     return {
         body: "ERROR",
         headers: {
