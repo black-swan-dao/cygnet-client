@@ -195,7 +195,7 @@
       <a
         href={navItem.link}
         class:active={navItem.slug == $currentSection}
-        sveltekit:prefetch
+        data-sveltekit-prefetch
         class="nav-item"
       >
         <div><strong>{navItem.label}</strong></div>
@@ -235,7 +235,7 @@
         <a
           href={navItem.link}
           class:active={navItem.slug == $currentSection}
-          sveltekit:prefetch
+          data-sveltekit-prefetch
           class="menu-item"
         >
           <div>{navItem.label}</div>

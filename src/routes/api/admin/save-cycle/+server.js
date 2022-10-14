@@ -1,3 +1,4 @@
+import { error } from '@sveltejs/kit';
 import { loadData } from "$lib/sanity.js"
 import { verifyToken } from '../../_jwt.js'
 import { v4 as uuidv4 } from 'uuid'
@@ -5,9 +6,9 @@ import { authorizedClient } from '../../_authorizedClient.js';
 
 const slugify = str => str.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, "-")
 
-export const post = async (event) => {
+export const POST = async (request) => {
     // Parse message body
-    const body = await event.request.json()
+    const body = await request.request.json()
     // Verify and decode JWT
     const decodedToken = await verifyToken(body.authorization)
     // Get user ID from token
@@ -15,11 +16,8 @@ export const post = async (event) => {
     // Get user from Sanity
     const user = await loadData("*[_type == 'user' && _id == $id][0]", { id: userId + '-' + import.meta.env.VITE_CYGNET_ID })
     // User is not admin, abort
-    if (!user.roles.includes('cygnet-admin')) {
-        return {
-            status: 403
-        };
-    }
+    if (!user.roles.includes('cygnet-admin')) throw error(403, 'Not admin');
+
     const message = body.message
 
     // const currentDoc = await loadData("*[_type == 'cycle' && _id == $id][0]", { id: message.id })
@@ -62,7 +60,6 @@ export const post = async (event) => {
     // Finally, write to the database
     const result = await authorizedClient.createOrReplace(newDoc)
     console.log(result)
-    return {
-        body: JSON.stringify(result)
-    };
+    // Return results
+    return new Response(JSON.stringify(result));
 };

@@ -2,9 +2,9 @@ import { loadData } from "$lib/sanity.js"
 import { verifyToken } from '../_jwt.js'
 import { authorizedClient } from '../_authorizedClient.js';
 
-export const post = async (event) => {
+export const POST = async (request) => {
     // Parse message body
-    const body = await event.request.json()
+    const body = await request.request.json()
     // Verfiy and decode JWT
     const decodedToken = await verifyToken(body.authorization)
     // Get user ID from token
@@ -16,7 +16,6 @@ export const post = async (event) => {
     if (authorIds.includes(userId)) {
         res = await authorizedClient.delete(body.proposalId)
     }
-    return {
-        body: JSON.stringify(res)
-    };
+    // Return results
+    return new Response(JSON.stringify(res));
 };

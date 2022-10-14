@@ -13,7 +13,7 @@
       <div class="resource-container">
         <a
           href={"/resources/" + get(resource, "slug.current", "")}
-          sveltekit:prefetch
+          data-sveltekit-prefetch
           class="resource-header">{resource.title}</a
         >
         {#each list.filter(p => p.resources.filter(r => r._ref === resource._id).length > 0) as item}

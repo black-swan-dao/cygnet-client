@@ -1,10 +1,11 @@
+import { error } from '@sveltejs/kit';
 import { loadData } from "$lib/sanity.js"
 import { verifyToken } from '../../_jwt.js'
 import { authorizedClient } from '../../_authorizedClient.js';
 
-export const post = async (event) => {
+export const POST = async (request) => {
     // Parse message body
-    const body = await event.request.json()
+    const body = await request.request.json()
     // Verify and decode JWT
     const decodedToken = await verifyToken(body.authorization)
     // Get user ID from token
@@ -12,11 +13,8 @@ export const post = async (event) => {
     // Get user from Sanity
     const user = await loadData("*[_type == 'user' && _id == $id][0]", { id: userId + '-' + import.meta.env.VITE_CYGNET_ID })
     // User is not admin, abort
-    if (!user.roles.includes('cygnet-admin')) {
-        return {
-            status: 403
-        };
-    }
+    if (!user.roles.includes('cygnet-admin')) throw error(403, 'Not admin');
+
     const message = body.message
 
     // Patch the doc
@@ -42,7 +40,6 @@ export const post = async (event) => {
         .set({ landingPageText: message.landingPageText })
         .commit() // Perform the patch and return a promise
 
-    return {
-        body: JSON.stringify(result)
-    };
+    // Return the result
+    return new Response(JSON.stringify(result));
 };

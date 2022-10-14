@@ -17,7 +17,7 @@
 </script>
 
 <a
-  sveltekit:prefetch
+  data-sveltekit-prefetch
   href={`/${path}/${get(item, "slug.current")}`}
   class="information"
 >

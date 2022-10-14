@@ -38,7 +38,9 @@
       <div class="content"><CountDown /></div>
     </div>
     <div>
-      <a href="/editor" sveltekit:prefetch class="button">+ Make a proposal</a>
+      <a href="/editor" data-sveltekit-prefetch class="button"
+        >+ Make a proposal</a
+      >
     </div>
   </div>
 
@@ -49,7 +51,7 @@
     <div class="header">
       You have not created any proposals yet. <a
         href="/editor"
-        sveltekit:prefetch>Click here to get started!</a
+        data-sveltekit-prefetch>Click here to get started!</a
       >
     </div>
   {/if}

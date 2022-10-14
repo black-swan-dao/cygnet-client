@@ -1,7 +1,7 @@
 import { loadData } from "$lib/sanity.js"
 
 // GET =>
-export const get = async (request) => {
+export const GET = async (request) => {
     const response = await loadData("*[_type == 'user' && slug.current == $slug][0]", { slug: request.params.slug })
-    return { body: response.status === 404 ? 'ERROR' : response };
+    return new Response(JSON.stringify(response));
 };

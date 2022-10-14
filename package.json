@@ -1,23 +1,22 @@
 {
   "name": "cygnet-2",
   "version": "0.0.1",
+  "private": true,
   "scripts": {
-    "dev": "svelte-kit dev",
-    "build": "svelte-kit build",
-    "package": "svelte-kit package",
-    "preview": "svelte-kit preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch"
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "devDependencies": {
     "@sveltejs/adapter-netlify": "^1.0.0-next.32",
-    "@sveltejs/kit": "1.0.0-next.405",
+    "@sveltejs/kit": "next",
     "node-sass": "^7.0.1",
     "svelte": "^3.48.0",
     "svelte-check": "^2.8.0",
     "svelte-preprocess": "^4.10.7",
     "tslib": "^2.4.0",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "vite": "^3.1.0"
   },
   "type": "module",
   "dependencies": {

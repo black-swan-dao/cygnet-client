@@ -1,24 +1,10 @@
-<script context="module">
-  export const load = async ({ params, fetch }) => {
-    const res = await fetch(`/resources/${params.slug}.json`)
-    if (res.ok) {
-      const item = await res.json()
-      return {
-        props: { item },
-      }
-    }
-    const { message } = await res.json()
-    return {
-      error: new Error(message),
-    }
-  }
-</script>
-
 <script>
   import Single from "$lib/components/Single.svelte"
   import { currentSection } from "$lib/ui.js"
   currentSection.set("resources")
-  export let item = {}
+  export let data
+  let { item } = data
+  $: ({ item } = data)
 </script>
 
 <Single {item} />

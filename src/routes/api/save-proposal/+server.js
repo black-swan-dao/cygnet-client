@@ -6,9 +6,9 @@ import uniqBy from 'lodash/uniqBy.js'
 
 const slugify = str => str.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, "-")
 
-export const post = async (event) => {
+export const POST = async (request) => {
     // Parse message body
-    const body = await event.request.json()
+    const body = await request.request.json()
     // Verfiy and decode JWT
     console.log('body.authorization', body.authorization)
     const decodedToken = await verifyToken(body.authorization)
@@ -92,7 +92,6 @@ export const post = async (event) => {
     // Finally, write to the database
     const result = await authorizedClient.createOrReplace(doc)
     console.log(result)
-    return {
-        body: JSON.stringify(result)
-    };
+    // Return results
+    return new Response(JSON.stringify(result));
 };

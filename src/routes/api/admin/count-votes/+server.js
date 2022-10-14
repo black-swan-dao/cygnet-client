@@ -13,8 +13,8 @@ export const authorizedClient = sanityClient({
     useCdn: false // `false` if you want to ensure fresh data
 })
 
-export const post = async (event) => {
-    const body = await event.request.json()
+export const POST = async (request) => {
+    const body = await request.request.json()
     const cycleId = body.cycleId
     if (cycleId) {
         // Prepare inital result document
@@ -72,14 +72,9 @@ export const post = async (event) => {
         // ====>
         const newVotePost = await authorizedClient.createOrReplace(resultObject)
 
-        return {
-            body: JSON.stringify(newVotePost),
-        };
+        return new Response(JSON.stringify(newVotePost));
     }
-    return {
-        body: "ERROR",
-        headers: {
-            'Access-Control-Allow-Origin': '*',
-        }
-    };
+
+    return new Response("ERROR");
+
 };

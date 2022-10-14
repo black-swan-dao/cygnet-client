@@ -48,17 +48,25 @@
   <!-- NAVIGATION -->
   {#if item._type == "proposal" && $submittedProposalsInCycle.length > 1}
     <div class="navigation">
-      <a href={prevProposalSlug} sveltekit:prefetch class="nav-button previous">
+      <a
+        href={prevProposalSlug}
+        data-sveltekit-prefetch
+        class="nav-button previous"
+      >
         PREV
       </a>
       <a
         href={"/" + $currentCycle.phase}
-        sveltekit:prefetch
+        data-sveltekit-prefetch
         class="nav-button return"
       >
         BACK TO {$currentCycle.phase}
       </a>
-      <a href={nextProposalSlug} sveltekit:prefetch class="nav-button next">
+      <a
+        href={nextProposalSlug}
+        data-sveltekit-prefetch
+        class="nav-button next"
+      >
         NEXT
       </a>
     </div>
@@ -83,8 +91,9 @@
       {#if item.authors && Array.isArray(item.authors)}
         <div class="authors">
           {#each item.authors as author, index (author._id)}
-            <a href={`/peers/${get(author, "slug.current")}`} sveltekit:prefetch
-              >{author.name}</a
+            <a
+              href={`/peers/${get(author, "slug.current")}`}
+              data-sveltekit-prefetch>{author.name}</a
             >{#if index < item.authors.length - 1},&nbsp;{/if}
           {/each}
         </div>
@@ -112,7 +121,7 @@
               <div class="resource">
                 – <a
                   href={`/resources/${get(resource, "slug.current")}`}
-                  sveltekit:prefetch
+                  data-sveltekit-prefetch
                   >{resource.title}
                 </a>
               </div>

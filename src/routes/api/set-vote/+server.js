@@ -1,16 +1,18 @@
+import { error } from '@sveltejs/kit';
 import { authorizedClient } from '../_authorizedClient.js';
 import { loadData } from "$lib/sanity.js"
 import { nanoid } from 'nanoid';
 import { verifyToken } from '../_jwt.js'
 
-export const post = async (event) => {
-  const body = await event.request.json()
+export const POST = async (request) => {
+  console.log('Setting vote...')
+  // Parse message body
+  const body = await request.request.json()
+  console.log('body', body)
+  // Verify and decode JWT
   const decodedToken = await verifyToken(body.authorization)
-  if (!decodedToken.sub) {
-    return {
-      body: "error"
-    }
-  }
+  if (!decodedToken.sub) throw error(403, 'Error');
+
   const userId = decodedToken.sub.replace(body.prefix, "")
 
   const currentDoc = await loadData("*[_type == 'vote' && user._ref == $userId && cycle._ref == $cycleId][0]", { userId: userId + '-' + import.meta.env.VITE_CYGNET_ID, cycleId: body.cycleId })
@@ -50,12 +52,11 @@ export const post = async (event) => {
         }
       })
     }
-
     res = await authorizedClient.createOrReplace(doc)
-
   }
 
-  return {
-    body: JSON.stringify(res)
-  }
+  console.log('res', res)
+
+  // Return results
+  return new Response(JSON.stringify(res));
 };
