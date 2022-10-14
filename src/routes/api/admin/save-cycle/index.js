@@ -5,9 +5,9 @@ import { authorizedClient } from '../../_authorizedClient.js';
 
 const slugify = str => str.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, "-")
 
-export async function POST({ request }) {
+export const post = async (event) => {
     // Parse message body
-    const body = await request.json()
+    const body = await event.request.json()
     // Verify and decode JWT
     const decodedToken = await verifyToken(body.authorization)
     // Get user ID from token

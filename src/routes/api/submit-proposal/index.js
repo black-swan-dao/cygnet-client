@@ -3,8 +3,8 @@ import get from 'lodash/get.js'
 import { verifyToken } from '../_jwt.js'
 import { authorizedClient } from '../_authorizedClient.js';
 
-export async function POST({ request }) {
-  const body = await request.json()
+export const post = async (event) => {
+  const body = await event.request.json()
   // Verfiy and decode JWT
   const decodedToken = await verifyToken(body.authorization)
   // Get user ID from token
