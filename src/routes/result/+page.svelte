@@ -21,7 +21,7 @@
         r.proposal.effectiveVotes = r.effectiveVotes
         r.proposal.voteCredits = r.voteCredits
         r.proposal.percentageOfEffectiveVotes =
-          (r.effectiveVotes / Math.abs(currentResult.totalEffectiveVotes)) * 10
+          (r.effectiveVotes / Math.abs(currentResult.totalEffectiveVotes)) * 100
         return r.proposal
       })
     }
