@@ -35,7 +35,7 @@
   const fromSimpleDateFormat = d => {
     // yyyy-mm-dd hh:mm => yyyy-mm-ddThh:mm:ss.000Z
     let dateParts = d.split(" ")
-    return dateParts[0] + "T" + dateParts[1] + ".000Z"
+    return dateParts[0] + "T" + dateParts[1] + ":00.000Z"
   }
 
   let cycleStart = cycle.start ? toSimpleDateFormat(cycle.start) : ""
