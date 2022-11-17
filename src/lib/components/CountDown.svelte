@@ -26,16 +26,22 @@
   }
 
   const updateCounter = () => {
-    duration = intervalToDuration({
-      start: new Date(),
-      end: new Date(targetTime),
-    })
+    try {
+      duration = intervalToDuration({
+        start: new Date(),
+        end: new Date(targetTime),
+      })
+    } catch (e) {
+      console.error(e)
+    }
 
-    months = duration.months
-    days = duration.days
-    hours = String(duration.hours).padStart(2, "0")
-    minutes = String(duration.minutes).padStart(2, "0")
-    seconds = String(duration.seconds).padStart(2, "0")
+    if (duration.months) {
+      months = duration.months
+      days = duration.days
+      hours = String(duration.hours).padStart(2, "0")
+      minutes = String(duration.minutes).padStart(2, "0")
+      seconds = String(duration.seconds).padStart(2, "0")
+    }
 
     setTimeout(() => {
       updateCounter()
