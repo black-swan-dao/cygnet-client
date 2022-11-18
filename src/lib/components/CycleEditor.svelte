@@ -26,6 +26,7 @@
   let phase = cycle.phase || phaseItems[0]
 
   const toSimpleDateFormat = d => {
+    console.log("d", d)
     // yyyy-mm-ddThh:mm:ss.000Z => yyyy-mm-dd hh:mm
     let dateParts = d.split("T")
     let timeParts = dateParts[1].split(".")

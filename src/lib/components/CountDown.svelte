@@ -26,7 +26,9 @@
   }
 
   const updateCounter = () => {
+    console.log("targetTime", targetTime)
     try {
+      console.log("new Date(targetTime)", new Date(targetTime))
       duration = intervalToDuration({
         start: new Date(),
         end: new Date(targetTime),
