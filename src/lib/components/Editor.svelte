@@ -1,7 +1,7 @@
 <script>
   import Select from "svelte-select"
   import { profile } from "$lib/authentication.js"
-  import { usersInCycle, resourcesInCycle } from "$lib/data.js"
+  import { usersInCycle, resourcesInCycle, instance } from "$lib/data.js"
   import { currentCycle } from "$lib/cycles"
   import { saveProposal, uploadImage } from "$lib/api-interface.js"
   import LoadingIndicator from "./LoadingIndicator.svelte"
@@ -66,7 +66,7 @@
     } else {
       validationErrors.description = false
     }
-    if (!imageRef) {
+    if ($instance.mandatoryImageUpload && !imageRef) {
       validationErrors.image = true
       valid = false
     } else {

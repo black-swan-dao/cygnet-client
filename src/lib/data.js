@@ -12,7 +12,7 @@ export const resources = writable([])
 export const votes = writable([])
 export const cycles = writable([])
 export const results = writable([])
-export const instance = writable([])
+export const instance = writable({})
 
 export const proposalsInCycle = derived(
     [proposals, currentCycle],
